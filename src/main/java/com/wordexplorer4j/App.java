@@ -32,7 +32,7 @@ public class App
         we.calculateWordsPca(false);
 
         we.plot(Arrays.asList("perro", "mujer", "hombre", "chico"), 4);
-        we.plot(Arrays.asList("lagarto", "pez", "lobo"));
+        we.plot(Arrays.asList("lagarto"));
         we.plot(Arrays.asList("muchahco", "campo", "enfermero"));
 
         //List<String> wordsToExplore = Arrays.asList("viejo", "mujer", "hombre", "rey", "reina");

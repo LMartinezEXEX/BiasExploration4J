@@ -1,7 +1,6 @@
 package com.wordexplorer4j.WordExploration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Visualizer extends Application{
@@ -33,6 +31,7 @@ public class Visualizer extends Application{
         ScatterChart<Number, Number> scatterChart = getScatterPlot();
 
         Scene scene = new Scene(scatterChart, 500, 400);
+        scene.getStylesheets().add("com/wordexplorer4j/WordExploration/Chart.css");
         primaryStage.setScene(scene);
         primaryStage.show();
         
@@ -42,8 +41,8 @@ public class Visualizer extends Application{
         NumberAxis xAxis = getAxis(0);
         NumberAxis yAxis = getAxis(1);
 
-        xAxis.setLabel("x");
-        yAxis.setLabel("y");
+        xAxis.setTickLabelsVisible(false);
+        yAxis.setTickLabelsVisible(false);
         
         ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
 
@@ -52,11 +51,9 @@ public class Visualizer extends Application{
         for (Word w : words) {
 
             XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>(w.getPcaCoord(0), w.getPcaCoord(1));
+            data.setNode(new LabeledNode(w.getWord()));
 
-            XYChart.Data<Number, Number> dataLabel = new XYChart.Data<Number, Number>(w.getPcaCoord(0), w.getPcaCoord(1) + 0.1);
-            dataLabel.setNode(new Text(w.getWord()));
-
-            series.getData().addAll(Arrays.asList(data, dataLabel));
+            series.getData().add(data);
         }
         scatterChart.getData().add(series);
 

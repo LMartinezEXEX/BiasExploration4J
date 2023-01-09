@@ -42,11 +42,6 @@ public class VecLoader extends DataLoader{
     }
 
     private double[] parseToEmbedding(String[] coords) {
-        //float[] embedding = new float[getEmbeddingDim()];
-        //for (int i = 1; i < coords.length; i++) {
-        //    embedding[i-1] = Float.parseFloat(coords[i]);
-        //}
-
         return IntStream.range(1, coords.length)
                         .mapToDouble(i -> Double.parseDouble(coords[i]))
                         .toArray();

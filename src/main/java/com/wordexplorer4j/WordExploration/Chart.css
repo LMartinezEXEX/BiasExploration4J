@@ -1,0 +1,12 @@
+.chart-symbol {
+    -fx-background-color: inherit;
+}
+
+.axis-tick-mark, 
+.axis-minor-tick-mark, 
+.chart-vertical-grid-lines, 
+.chart-horizontal-grid-lines, 
+.chart-vertical-zero-line, 
+.chart-horizontal-zero-line  {
+    -fx-stroke: transparent;
+}
