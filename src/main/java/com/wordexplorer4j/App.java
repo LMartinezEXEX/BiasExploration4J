@@ -12,6 +12,7 @@ import com.wordexplorer4j.LanguageModel.CrowsPairs;
 import com.wordexplorer4j.LanguageModel.LanguageModel;
 import com.wordexplorer4j.LanguageModel.MaskFillerRanker;
 import com.wordexplorer4j.WordExploration.WordExplorer;
+import com.wordexplorer4j.WordExploration.BiasExploration.BiasExplorer;
 
 import ai.djl.MalformedModelException;
 import ai.djl.repository.zoo.ModelNotFoundException;
@@ -32,8 +33,8 @@ public class App
         we.calculateWordsPca(false);
 
         we.plot(Arrays.asList("perro", "mujer", "hombre", "chico"), 4);
-        we.plot(Arrays.asList("lagarto"));
-        we.plot(Arrays.asList("muchahco", "campo", "enfermero"));
+        //we.plot(Arrays.asList("lagarto"));
+        //we.plot(Arrays.asList("muchahco", "campo", "enfermero"));
 
         //List<String> wordsToExplore = Arrays.asList("viejo", "mujer", "hombre", "rey", "reina");
         //we.plot(wordsToExplore);
@@ -61,5 +62,8 @@ public class App
         }
          */
         //Platform.exit();
+
+        //BiasExplorer be = new BiasExplorer(we);
+        //be.plot2SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino"), Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"));
     }
 }

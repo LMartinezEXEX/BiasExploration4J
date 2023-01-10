@@ -16,7 +16,7 @@ public class NearestNeighbour {
     private INDArray embeddings;
 
     public NearestNeighbour(Map<String, INDArray> labeledPoints) {
-        this.embeddings = Nd4j.zeros(labeledPoints.size(), 300);
+        this.embeddings = Nd4j.zeros(labeledPoints.size(), 300); // VER DIMENSION HARDCODEADA!
 
         int idxCount = 0;
         for(Map.Entry<String, INDArray> e : labeledPoints.entrySet()) {

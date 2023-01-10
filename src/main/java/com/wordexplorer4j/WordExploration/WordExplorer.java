@@ -15,6 +15,7 @@ import org.nd4j.linalg.dimensionalityreduction.PCA;
 
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.NearestNeighbour.NearestNeighbour;
+import com.wordexplorer4j.WordExploration.Visualization.WordExplorerVisualizer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -108,7 +109,7 @@ public class WordExplorer {
     public void plot(List<String> words) {
         Platform.runLater(() -> {
             try {
-                new Visualizer(getAvailableWordsToPlot(words)).plot(new Stage());
+                new WordExplorerVisualizer(getAvailableWordsToPlot(words)).plot(new Stage());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -140,7 +141,7 @@ public class WordExplorer {
     private void initPlotter() {
         Platform.setImplicitExit(false);
         final JFXPanel fxPanel = new JFXPanel();
-        new Thread(() -> Application.launch(Visualizer.class)).start();
+        new Thread(() -> Application.launch(WordExplorerVisualizer.class)).start();
     }
 
     public ArrayList<Word> getWords() {

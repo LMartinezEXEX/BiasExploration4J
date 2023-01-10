@@ -1,8 +1,10 @@
-package com.wordexplorer4j.WordExploration;
+package com.wordexplorer4j.WordExploration.Visualization;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import com.wordexplorer4j.WordExploration.Word;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -11,30 +13,30 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
-public class Visualizer extends Application{
+public class WordExplorerVisualizer extends Application implements Visualizer{
     public static List<Word> wordsToPlot;
 
     private List<Word> words;
 
-    public Visualizer() {
+    public WordExplorerVisualizer() {
         this.words = new ArrayList<>();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {}
 
-    Visualizer(List<Word> words) {
+    public WordExplorerVisualizer(List<Word> words) {
         this.words = words;
     }
     
+    @Override
     public void plot(Stage primaryStage) throws Exception {
         ScatterChart<Number, Number> scatterChart = getScatterPlot();
 
         Scene scene = new Scene(scatterChart, 500, 400);
-        scene.getStylesheets().add("com/wordexplorer4j/WordExploration/Chart.css");
+        scene.getStylesheets().add("com/wordexplorer4j/WordExploration/Styles/Chart.css");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
     }
 
     private ScatterChart<Number, Number> getScatterPlot() {
@@ -56,7 +58,6 @@ public class Visualizer extends Application{
             series.getData().add(data);
         }
         scatterChart.getData().add(series);
-
         return scatterChart;
     }
 
@@ -66,5 +67,4 @@ public class Visualizer extends Application{
 
         return new NumberAxis(min, max, 1);
     }
-    
 }

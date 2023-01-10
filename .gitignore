@@ -28,3 +28,5 @@ hs_err_pid*
 /.project
 /.settings
 /.classpath
+embeddings.vec
+embeddings2.vec

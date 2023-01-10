@@ -1,4 +1,4 @@
-package com.wordexplorer4j.WordExploration;
+package com.wordexplorer4j.WordExploration.Visualization;
 
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
