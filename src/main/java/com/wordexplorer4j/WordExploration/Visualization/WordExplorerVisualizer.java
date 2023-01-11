@@ -47,9 +47,9 @@ public class WordExplorerVisualizer extends Application implements Visualizer{
         yAxis.setTickLabelsVisible(false);
         
         ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
+        scatterChart.setLegendVisible(false);
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName("Word Embeddings");
         for (Word w : words) {
 
             XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>(w.getPcaCoord(0), w.getPcaCoord(1));

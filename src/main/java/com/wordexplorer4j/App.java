@@ -63,7 +63,14 @@ public class App
          */
         //Platform.exit();
 
-        //BiasExplorer be = new BiasExplorer(we);
-        //be.plot2SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino"), Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"));
+        /*
+        BiasExplorer be = new BiasExplorer(we);
+        be.plot4SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
+                          Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"), 
+                          Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino"),
+                          Arrays.asList("joven", "inmaduro", "niño", "crio"),
+                          Arrays.asList("viejo", "maduro", "anciano", "adulto")
+                        );
+        */
     }
 }
