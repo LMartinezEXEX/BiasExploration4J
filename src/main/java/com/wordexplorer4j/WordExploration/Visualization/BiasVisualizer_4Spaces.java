@@ -1,6 +1,7 @@
 package com.wordexplorer4j.WordExploration.Visualization;
 
 import java.util.List;
+import java.util.Objects;
 
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
@@ -18,6 +19,13 @@ public class BiasVisualizer_4Spaces extends BiasVisualizer {
     
     public BiasVisualizer_4Spaces(List<String> words, double[][] projections, List<String> kernelLeft, List<String> kernelRight, List<String> kernelUp, List<String> kernelDown) {
         super(words.toArray(String[]::new));
+        if (Objects.isNull(projections)) {
+            throw new IllegalArgumentException("Projections array can not be null");
+        } else if (Objects.isNull(kernelLeft) || Objects.isNull(kernelRight) ||
+                    Objects.isNull(kernelUp) || Objects.isNull(kernelDown)) {
+            throw new IllegalArgumentException("Kernels list definition can not be null");
+        }
+
         this.projections = projections;
 
         leftSide = String.join(", ", kernelRight);
@@ -28,6 +36,10 @@ public class BiasVisualizer_4Spaces extends BiasVisualizer {
 
     @Override
     public void plot(Stage primaryStage) throws Exception {
+        if (Objects.isNull(primaryStage)) {
+            throw new IllegalArgumentException("Stage to put chart into can not be null");
+        }
+        
         ScatterChart<Number, Number> scatterChart = getScatterPlot();
 
         Scene scene = new Scene(scatterChart, 500, 400);

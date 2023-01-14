@@ -2,9 +2,9 @@ package com.wordexplorer4j.WordExploration.BiasExploration;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -20,17 +20,19 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class BiasExplorer {
-    private Map<String, Word> words = new HashMap<>();
+    private Map<String, Word> words;
     private int embeddingDimension;
 
     public BiasExplorer(WordExplorer wordExplorer) {
-        for (Word w : wordExplorer.getWords()) {
-            words.put(w.getWord(), w);
-        }
+        this.words = wordExplorer.getWordsMap();
         this.embeddingDimension = wordExplorer.getEmbeddingDimension();
     }
 
     public double[] plot2SpaceBias(List<String> words, List<String> kernel_1, List<String> kernel_2) {
+        if (Objects.isNull(words) || Objects.isNull(kernel_1) || Objects.isNull(kernel_2)) {
+            throw new IllegalArgumentException("No list of words can be null");
+        }
+
         List<Word> wordsInVocab = getWordsInVocab(words);
         double[] projections = calculateBias(wordsInVocab, kernel_1, kernel_2);
 
@@ -49,6 +51,11 @@ public class BiasExplorer {
     }
 
     public double[][] plot4SpaceBias(List<String> words, List<String> kernel_1, List<String> kernel_2, List<String> kernel_3, List<String> kernel_4) {
+        if (Objects.isNull(words) || Objects.isNull(kernel_1) || Objects.isNull(kernel_2) ||
+            Objects.isNull(kernel_3) || Objects.isNull(kernel_4)) {
+            throw new IllegalArgumentException("No list of words can be null");
+        }
+
         List<Word> wordsInVocab = getWordsInVocab(words);
         double[] projections_x = calculateBias(wordsInVocab, kernel_1, kernel_2);
         double[] projections_y = calculateBias(wordsInVocab, kernel_3, kernel_4);
@@ -131,6 +138,8 @@ public class BiasExplorer {
         for (String word : words) {
             if (this.words.containsKey(word)) {
                 wordsInVocab.add(this.words.get(word));
+            } else {
+                System.out.println("[WARN]  BiasExplorer : Word { " + word + " } is not in vocabulary.");
             }
         }
 
@@ -142,6 +151,8 @@ public class BiasExplorer {
         for (String word : words) {
             if (this.words.containsKey(word)) {
                 wordsInVocab.add(word);
+            } else {
+                System.out.println("[WARN]  BiasExplorer : Word { " + word + " } is not in vocabulary.");
             }
         }
 

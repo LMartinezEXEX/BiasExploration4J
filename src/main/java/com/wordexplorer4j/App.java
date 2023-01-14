@@ -32,7 +32,7 @@ public class App
         WordExplorer we = new WordExplorer(data);
         we.calculateWordsPca(false);
 
-        we.plot(Arrays.asList("perro", "mujer", "hombre", "chico"), 4);
+        //we.plot(Arrays.asList("perro", "mujer", "hombre", "chico", "papaya21"), 4);
         //we.plot(Arrays.asList("lagarto"));
         //we.plot(Arrays.asList("muchahco", "campo", "enfermero"));
 
@@ -63,7 +63,7 @@ public class App
          */
         //Platform.exit();
 
-        /*
+        
         BiasExplorer be = new BiasExplorer(we);
         be.plot4SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
                           Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"), 
@@ -71,6 +71,6 @@ public class App
                           Arrays.asList("joven", "inmaduro", "niño", "crio"),
                           Arrays.asList("viejo", "maduro", "anciano", "adulto")
                         );
-        */
+        
     }
 }

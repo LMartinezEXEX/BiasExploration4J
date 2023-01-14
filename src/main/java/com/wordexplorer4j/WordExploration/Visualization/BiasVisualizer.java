@@ -1,5 +1,7 @@
 package com.wordexplorer4j.WordExploration.Visualization;
 
+import java.util.Objects;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -11,14 +13,16 @@ public abstract class BiasVisualizer extends Application implements Visualizer{
     }
 
     public BiasVisualizer(String[] words) {
-        this.words = words;
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Word list can not be null");
+        }
+
+        this.words = words.clone();
     }
 
     public String[] getWords() {
-        return words;
+        return words.clone();
     }
-
-    abstract public void plot(Stage primaryStage) throws Exception;
 
     @Override
     public void start(Stage primaryStage) throws Exception {}

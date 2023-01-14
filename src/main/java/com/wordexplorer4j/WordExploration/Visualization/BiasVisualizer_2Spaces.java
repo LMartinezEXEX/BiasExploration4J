@@ -2,6 +2,7 @@ package com.wordexplorer4j.WordExploration.Visualization;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.wordexplorer4j.WordExploration.BiasExploration.ProjectedWord;
 
@@ -20,6 +21,11 @@ public class BiasVisualizer_2Spaces extends BiasVisualizer{
     
     public BiasVisualizer_2Spaces(List<ProjectedWord> proyectedWords, List<String> kernelLeft, List<String> kernelRight) {
         super(proyectedWords.stream().map(ProjectedWord::getWord).toArray(String[]::new));
+
+        if (Objects.isNull(kernelLeft) || Objects.isNull(kernelRight)) {
+            throw new IllegalArgumentException("Kernels list definition can not be null");
+        }
+
         String[] words = new String[proyectedWords.size()];
         projections = new double[proyectedWords.size()];
         for (int i = 0; i < proyectedWords.size(); ++i) {
@@ -33,6 +39,10 @@ public class BiasVisualizer_2Spaces extends BiasVisualizer{
     
     @Override
     public void plot(Stage primaryStage) throws Exception {
+        if (Objects.isNull(primaryStage)) {
+            throw new IllegalArgumentException("Stage to put chart into can not be null");
+        }
+
         BarChart<Number, String> barChart = getBarPlot();
 
         Scene scene = new Scene(barChart, 500, 400);

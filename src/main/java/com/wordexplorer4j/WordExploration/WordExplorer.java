@@ -1,6 +1,7 @@
 package com.wordexplorer4j.WordExploration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,15 @@ import javafx.stage.Stage;
 
 public class WordExplorer {
 
-    private ArrayList<Word> words = new ArrayList<>();
+    private Map<String, Word> wordsMap = new HashMap<>();
     private int embeddingDimension;
-    private NearestNeighbour nearestNeighbour = null;
+    private NearestNeighbour nearestNeighbour;
 
     public WordExplorer(HashMap<String, double[]> embeddings) {
+        if (Objects.isNull(embeddings)) {
+            throw new IllegalArgumentException("Embeddings map can not be null");
+        }
+
         for (double[] d : embeddings.values()) {
             this.embeddingDimension = d.length;
             break;
@@ -36,20 +41,26 @@ public class WordExplorer {
 
         for(Map.Entry<String, double[]> entry : embeddings.entrySet()) {
             INDArray ndEmbedding = Nd4j.create(entry.getValue(), new int[] {1, this.getEmbeddingDimension()});
-            words.add(new Word(entry.getKey(), ndEmbedding));
+            wordsMap.put(entry.getKey(), new Word(entry.getKey(), ndEmbedding));
         }
 
+        wordsMap = Collections.unmodifiableMap(wordsMap);
         initPlotter();
     }
 
     public WordExplorer(DataLoader data) {
+        if (Objects.isNull(data)) {
+            throw new IllegalArgumentException("Data loader can not be null");
+        }
+
         this.embeddingDimension = data.getEmbeddingDimension();
 
         for(Map.Entry<String, double[]> entry : data.getEmbeddings().entrySet()) {
             INDArray ndEmbedding = Nd4j.create(entry.getValue(), new int[] {1, this.getEmbeddingDimension()});
-            words.add(new Word(entry.getKey(), ndEmbedding));
+            wordsMap.put(entry.getKey(), new Word(entry.getKey(), ndEmbedding));
         }
 
+        wordsMap = Collections.unmodifiableMap(wordsMap);
         initPlotter();
     }
 
@@ -60,11 +71,11 @@ public class WordExplorer {
         if (normalize) {
             INDArray matrix = this.getWordsEmbeddingMatrix();
 
-            DataSet dataSet = new DataSet(matrix, Nd4j.ones(words.size(), this.getEmbeddingDimension()));
+            DataSet dataSet = new DataSet(matrix, Nd4j.ones(this.getWordsMap().size(), this.getEmbeddingDimension()));
             normalizer.fit(dataSet);
         }
 
-        for (Word w : this.getWords()) {
+        for (Word w : this.getWordsMap().values()) {
             w.setPca(w.getEmbedding().mmul(pca_matrix));
             if (normalize) {
                 w.normalizeEmbedding(normalizer);
@@ -79,13 +90,12 @@ public class WordExplorer {
         return factors;
     }
 
-    public INDArray getWordsEmbeddingMatrix() {
-        List<INDArray> ndArrays = new ArrayList<>();
-        for (Word w : this.getWords()) {
-            ndArrays.add(w.getEmbedding());
-        }
+    private INDArray getWordsEmbeddingMatrix() {
+        List<INDArray> ndArrays = this.getWordsMap().values().stream()
+                                                            .map(Word::getEmbedding)
+                                                            .collect(Collectors.toList());
 
-        int rows = words.size();
+        int rows = this.getWordsMap().size();
         int columns = this.getEmbeddingDimension();
 
         INDArray matrix = Nd4j.create(ndArrays, new int[] {rows, columns});
@@ -93,23 +103,35 @@ public class WordExplorer {
     }
 
     public Map<String, List<String>> getNeighbours(List<String> words, int quantity) {
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Word list can not be null");
+        }
+
         if (Objects.isNull(this.nearestNeighbour)) 
             this.nearestNeighbour = new NearestNeighbour(this.getNeighbourMapping());
         
-        return this.nearestNeighbour.getKNearestNeighbour(words, quantity);
+        List<String> wordsInVocab = getWordsInVocab(words).stream()
+                                                        .map(Word::getWord)
+                                                        .collect(Collectors.toList());
+
+        return this.nearestNeighbour.getKNearestNeighbour(wordsInVocab, quantity);
     }
 
     private Map<String, INDArray> getNeighbourMapping() {
-        Map<String, INDArray> map = new HashMap<>(); 
-        for(Word w : this.words)
-            map.put(w.getWord(), w.getEmbedding());
-        return map;
+        return this.getWordsMap()
+                    .values()
+                    .stream()
+                    .collect(Collectors.toMap(Word::getWord, Word::getEmbedding));
     }
 
     public void plot(List<String> words) {
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Word list can not be null");
+        }
+
         Platform.runLater(() -> {
             try {
-                new WordExplorerVisualizer(getAvailableWordsToPlot(words)).plot(new Stage());
+                new WordExplorerVisualizer(getWordsInVocab(words)).plot(new Stage());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -117,7 +139,11 @@ public class WordExplorer {
     }
 
     public void plot(List<String> words, int numberOfNeighbours) {
-        List<Word> wordsInVocab = getAvailableWordsToPlot(words);
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Word list can not be null");
+        }
+
+        List<Word> wordsInVocab = getWordsInVocab(words);
 
         List<String> neighbourWords = new ArrayList<>(wordsInVocab.size() * numberOfNeighbours);
         Map<String, List<String>> map = getNeighbours(wordsInVocab.stream().map(Word::getWord).collect(Collectors.toList()), numberOfNeighbours);
@@ -131,10 +157,16 @@ public class WordExplorer {
         plot(neighbourWords);
     }
 
-    private List<Word> getAvailableWordsToPlot(List<String> words) {
-        return this.words.stream()
-                    .filter(w -> words.contains(w.getWord()))
-                    .collect(Collectors.toList());
+    private List<Word> getWordsInVocab(List<String> words) {
+        List<Word> wordsInVocab = new ArrayList<>(words.size());
+        for (String w : words) {
+            if (this.getWordsMap().containsKey(w)) {
+                wordsInVocab.add(this.getWordsMap().get(w));
+            } else {
+                System.out.println("[WARN]  WordExplorer : Word { " + w + " } is not in vocabulary.");
+            }
+        }
+        return wordsInVocab;
     }
 
     @SuppressWarnings("unused")
@@ -144,11 +176,11 @@ public class WordExplorer {
         new Thread(() -> Application.launch(WordExplorerVisualizer.class)).start();
     }
 
-    public ArrayList<Word> getWords() {
-        return words;
+    public Map<String, Word> getWordsMap() {
+        return this.wordsMap;
     }
 
     public int getEmbeddingDimension() {
-        return embeddingDimension;
+        return this.embeddingDimension;
     }
 }

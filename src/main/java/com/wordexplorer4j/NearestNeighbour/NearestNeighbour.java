@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -16,11 +17,15 @@ public class NearestNeighbour {
     private INDArray embeddings;
 
     public NearestNeighbour(Map<String, INDArray> labeledPoints) {
-        this.embeddings = Nd4j.zeros(labeledPoints.size(), 300); // VER DIMENSION HARDCODEADA!
+        if (Objects.isNull(labeledPoints)) {
+            throw new IllegalArgumentException("Labeled Points can not be null");
+        }
+
+        int dim = getEmbeddingDimension(new ArrayList<>(labeledPoints.values()));
+        this.embeddings = Nd4j.zeros(labeledPoints.size(), dim);
 
         int idxCount = 0;
         for(Map.Entry<String, INDArray> e : labeledPoints.entrySet()) {
-            //System.out.println(e.getValue().shape());
             this.embeddings.putRow(idxCount, e.getValue());
             wordsEmbeddingMapping.put(e.getKey(), idxCount);
             idToWordMapping.put(idxCount, e.getKey());
@@ -29,6 +34,10 @@ public class NearestNeighbour {
     }
 
     public Map<String, List<String>> getKNearestNeighbour(List<String> words, int k) {
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Word list to calculate neighbours can not be null");
+        }
+
         INDArray distanceMatrix = Nd4j.zeros(words.size(), this.embeddings.size(0));
 
         // Fill in the distances matrix using Cosine Similarity
@@ -72,5 +81,9 @@ public class NearestNeighbour {
         }
 
         return indexes;
+    }
+
+    private int getEmbeddingDimension(List<INDArray> arrays) {
+        return (int) arrays.get(0).size(1);
     }
 }

@@ -3,6 +3,7 @@ package com.wordexplorer4j.WordExploration.Visualization;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import com.wordexplorer4j.WordExploration.Word;
 
@@ -26,11 +27,19 @@ public class WordExplorerVisualizer extends Application implements Visualizer{
     public void start(Stage primaryStage) throws Exception {}
 
     public WordExplorerVisualizer(List<Word> words) {
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Word list can not be null");
+        }
+
         this.words = words;
     }
     
     @Override
     public void plot(Stage primaryStage) throws Exception {
+        if (Objects.isNull(primaryStage)) {
+            throw new IllegalArgumentException("Stage to put chart into can not be null");
+        }
+
         ScatterChart<Number, Number> scatterChart = getScatterPlot();
 
         Scene scene = new Scene(scatterChart, 500, 400);
@@ -52,7 +61,7 @@ public class WordExplorerVisualizer extends Application implements Visualizer{
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         for (Word w : words) {
 
-            XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>(w.getPcaCoord(0), w.getPcaCoord(1));
+            XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>(w.getPca(0), w.getPca(1));
             data.setNode(new LabeledNode(w.getWord()));
 
             series.getData().add(data);
@@ -62,8 +71,8 @@ public class WordExplorerVisualizer extends Application implements Visualizer{
     }
 
     private NumberAxis getAxis(int i) {
-        int min = (int) Math.floor(words.stream().map(w -> w.getPcaCoord(i)).min(Comparator.naturalOrder()).get());
-        int max = (int) Math.ceil(words.stream().map(w -> w.getPcaCoord(i)).max(Comparator.naturalOrder()).get());
+        int min = (int) Math.floor(words.stream().map(w -> w.getPca(i)).min(Comparator.naturalOrder()).get());
+        int max = (int) Math.ceil(words.stream().map(w -> w.getPca(i)).max(Comparator.naturalOrder()).get());
 
         return new NumberAxis(min, max, 1);
     }

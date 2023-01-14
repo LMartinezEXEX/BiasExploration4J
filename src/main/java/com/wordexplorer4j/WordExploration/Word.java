@@ -13,7 +13,7 @@ public class Word {
         this.embedding = embedding;
     }
 
-    public double getPcaCoord(int coord) {
+    public double getPca(int coord) {
         return this.getPca().getDouble(1, coord);
     }
 
