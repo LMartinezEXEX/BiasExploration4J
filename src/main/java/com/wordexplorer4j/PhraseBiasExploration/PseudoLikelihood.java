@@ -1,5 +1,7 @@
-package com.wordexplorer4j.LanguageModel;
+package com.wordexplorer4j.PhraseBiasExploration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +14,11 @@ public class PseudoLikelihood {
     private List<Double> scores;
 
     public PseudoLikelihood(List<Double> scores) {
-        this.scores = scores;
+        if (Objects.isNull(scores)) {
+            throw new IllegalArgumentException("Scores list can not be null");
+        }
+        
+        this.scores = Collections.unmodifiableList(scores);
     }
 
     public static <K, V> Map<K, V> zipToMap(List<K> keys, List<V> values) {
@@ -23,6 +29,10 @@ public class PseudoLikelihood {
         Iterator<V> valIter = values.iterator();
         return IntStream.range(0, keys.size()).boxed()
                 .collect(Collectors.toMap(_i -> keyIter.next(), _i -> valIter.next()));
+    }
+
+    public List<Double> getScores() {
+        return new ArrayList<>(scores);
     }
 
     public List<Double> getPLLScores() {

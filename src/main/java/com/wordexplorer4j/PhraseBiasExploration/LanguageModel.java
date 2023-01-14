@@ -1,4 +1,4 @@
-package com.wordexplorer4j.LanguageModel;
+package com.wordexplorer4j.PhraseBiasExploration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,62 +46,14 @@ public class LanguageModel {
         setTokenizer();
     }
 
-
-    public double compute(String phrase, String word) {
-
-        // Generate sub-phrases
-        String filledPhrase = phrase.replace("[MASK]", word);
-
-        Encoding encoding = tokenizer.encode(filledPhrase);
-        long[] indices = encoding.getIds();
-        String[] allTokens = encoding.getTokens();
-        String[] tokens = Arrays.copyOfRange(allTokens, 1, allTokens.length-1);
-        List<String> filledSubphrases = new ArrayList<>();
-        for(int i = 0; i < tokens.length; ++i) {
-            String token = tokens[i];
-            tokens[i] = "[MASK]";
-            String evaluatePhrase = String.join(" ", tokens);
-            tokens[i] = token;
-
-            filledSubphrases.add(evaluatePhrase);
-        }
-
-        // Get valid tokens
-        List<String> validTokens = new ArrayList<>();
-        for (long l : indices) {
-            validTokens.add(tokenizer.decode(new long[] {l}).trim());
-        }
-        validTokens.remove(0);
-        validTokens.remove(validTokens.size() - 1);
-
-        double rank = 0.0;
-        for (int i = 0; i < filledSubphrases.size(); i++) {
-            Translator<String, Classifications> translator = getTranslator(Arrays.asList(validTokens.get(i)));
-            Predictor<String, Classifications> predictor = model.newPredictor(translator);
-
-            try {
-
-                Classification res = predictor.predict(filledSubphrases.get(i)).item(0);
-                //System.out.println("WORD: " + res.getClassName() + "| VAL: " +res.getProbability());
-
-                rank +=  Math.log10(res.getProbability());
-            } catch (TranslateException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //System.out.println("RANK with {" + word + "}:" + rank);
-        return rank;
-    }
-
     public double rank(List<String> processedPhrases, List<String> validTokens) {
         if (processedPhrases.size() != validTokens.size()) {
-            throw new IllegalArgumentException("Error: There must be a phrase for each valid token");
+            throw new IllegalArgumentException("There must be a phrase for each valid token");
         }
 
         double rank = 0.0;
         for(int i = 0; i < processedPhrases.size(); ++i) {
-            Translator<String, Classifications> translator = getTranslator(Arrays.asList(validTokens.get(i)));
+            Translator<String, Classifications> translator = getTranslator(validTokens.get(i));
             Predictor<String, Classifications> predictor = model.newPredictor(translator);
             try {
                 Classification res = predictor.predict(processedPhrases.get(i)).item(0);
@@ -217,18 +169,18 @@ public class LanguageModel {
 
     private Translator<String, Classifications> getTranslator() {
         try {
-            return FillMaskCustomTranslator.builder(tokenizer).build();
+            return PredictTokenTranslator.builder(tokenizer).build();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private Translator<String, Classifications> getTranslator(List<String> wordList) {
+    private Translator<String, Classifications> getTranslator(String tokenToPredict) {
         try {
-            return FillMaskCustomTranslator.builder(tokenizer)
-                                                .optWordList(wordList)
-                                                .build();
+            return PredictTokenTranslator.builder(tokenizer)
+                                            .optTokenToPredict(tokenToPredict)
+                                            .build();
         } catch (IOException e) {
             e.printStackTrace();
         }

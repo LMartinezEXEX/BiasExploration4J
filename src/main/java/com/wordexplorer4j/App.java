@@ -8,9 +8,9 @@ import java.util.Map;
 
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.DataLoader.VecLoader;
-import com.wordexplorer4j.LanguageModel.CrowsPairs;
-import com.wordexplorer4j.LanguageModel.LanguageModel;
-import com.wordexplorer4j.LanguageModel.MaskFillerRanker;
+import com.wordexplorer4j.PhraseBiasExploration.CrowsPairs;
+import com.wordexplorer4j.PhraseBiasExploration.LanguageModel;
+import com.wordexplorer4j.PhraseBiasExploration.MaskFillerRanker;
 import com.wordexplorer4j.WordExploration.WordExplorer;
 import com.wordexplorer4j.WordExploration.BiasExploration.BiasExplorer;
 
@@ -29,8 +29,8 @@ public class App
         DataLoader data = new VecLoader();
         data.loadDataset(Paths.get("BiasExploration4J/src/main/java/com/wordexplorer4j/data/100k_es_embedding.vec"));
 
-        WordExplorer we = new WordExplorer(data);
-        we.calculateWordsPca(false);
+        //WordExplorer we = new WordExplorer(data);
+        //we.calculateWordsPca(false);
 
         //we.plot(Arrays.asList("perro", "mujer", "hombre", "chico", "papaya21"), 4);
         //we.plot(Arrays.asList("lagarto"));
@@ -42,8 +42,6 @@ public class App
         //for(List<String> n : map.values()) {
         //    System.out.println(n);
         //}
-        //LanguageModel lm = new LanguageModel();
-        //lm.compute("My [MASK] is sozosoz cute.", Arrays.asList("mom", "dad"));
 
         /*
         CrowsPairs cp = new CrowsPairs();
@@ -56,14 +54,14 @@ public class App
 
         /*
         MaskFillerRanker mf = new MaskFillerRanker();
-        Map<String, Double> pllScores = mf.compare("The [MASK] people are sozoszo poor", Arrays.asList("native"));
+        Map<String, Double> pllScores = mf.compare("The [MASK] people are sozoszo poor", Arrays.asList("native", "black"));
         for(Map.Entry<String, Double> e : pllScores.entrySet()) {
             System.out.println("PLL score for {" + e.getKey() + "}: " + e.getValue());
         }
-         */
+        */
         //Platform.exit();
 
-        
+        /*
         BiasExplorer be = new BiasExplorer(we);
         be.plot4SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
                           Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"), 
@@ -71,6 +69,6 @@ public class App
                           Arrays.asList("joven", "inmaduro", "niño", "crio"),
                           Arrays.asList("viejo", "maduro", "anciano", "adulto")
                         );
-        
+        */
     }
 }

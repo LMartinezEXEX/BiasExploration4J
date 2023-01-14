@@ -1,4 +1,4 @@
-package com.wordexplorer4j.LanguageModel;
+package com.wordexplorer4j.PhraseBiasExploration;
 
 import ai.djl.huggingface.tokenizers.Encoding;
 import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
@@ -17,23 +17,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** The translator for Huggingface fill mask model. */
-public class FillMaskCustomTranslator implements Translator<String, Classifications> {
+public class PredictTokenTranslator implements Translator<String, Classifications> {
 
     private HuggingFaceTokenizer tokenizer;
     private String maskToken;
     private long maskTokenId;
     private int topK;
     private Batchifier batchifier;
-    private List<String> wordList;
+    private String tokenToPredict;
 
-    FillMaskCustomTranslator(
-            HuggingFaceTokenizer tokenizer, String maskToken, List<String> wordList, int topK, Batchifier batchifier) {
+    PredictTokenTranslator(
+            HuggingFaceTokenizer tokenizer, String maskToken, String tokenToPredict, int topK, Batchifier batchifier) {
         this.tokenizer = tokenizer;
         this.maskToken = maskToken;
         this.topK = topK;
-        this.wordList = wordList;
+        this.tokenToPredict = tokenToPredict;
         this.batchifier = batchifier;
         Encoding encoding = tokenizer.encode(maskToken, false);
         maskTokenId = encoding.getIds()[0];
@@ -67,14 +68,6 @@ public class FillMaskCustomTranslator implements Translator<String, Classificati
         ctx.setAttachment("tokenMaskedIdx", indices[maskIndex]);
         long[] attentionMask = encoding.getAttentionMask();
         NDList ndList = new NDList(2);
-        /*
-        System.out.print("LEN: " + indices.length + " ");
-        for(long l : indices) {
-            System.out.print(tokenizer.decode(new long[] {l}) + " ");
-        }
-        System.out.println();
-        */
-        wordList.forEach(s -> System.out.println("Se procesa: " + s + "\n"));
         ndList.add(manager.create(indices));
         ndList.add(manager.create(attentionMask));
         return ndList;
@@ -84,10 +77,10 @@ public class FillMaskCustomTranslator implements Translator<String, Classificati
     @Override
     public Classifications processOutput(TranslatorContext ctx, NDList list) throws TranslateException{
         Classifications cls;
-        if (wordList.isEmpty()) {
+        if (Objects.isNull(tokenToPredict) || tokenToPredict.equals("")) {
             cls = processOutputWithTop(ctx, list);
         } else {
-            cls = processOutputWithWordList(ctx, list);
+            cls = processOutputWithTokenToPredict(ctx, list);
         }
         return cls;
     }
@@ -106,18 +99,18 @@ public class FillMaskCustomTranslator implements Translator<String, Classificati
         return new Classifications(Arrays.asList(classes), probabilities);
     }
 
-    public Classifications processOutputWithWordList(TranslatorContext ctx, NDList list) {
+    public Classifications processOutputWithTokenToPredict(TranslatorContext ctx, NDList list) {
         int maskIndex = (int) ctx.getAttachment("maskIndex");
         NDArray prob = list.get(0).get(maskIndex).softmax(0);
-        List<Double> probabilities = new ArrayList<>(wordList.size());
         List<String> tokens = new ArrayList<>((int) prob.size(0));
         for (int i = 0; i < prob.size(0); ++i) {
             tokens.add(tokenizer.decode(new long[] {i}).trim());
         }
 
-        String token = wordList.get(0);
-        List<String> tokenClass = Arrays.asList(token);
-        int tokenIdx = tokens.indexOf(token);
+        List<String> tokenClass = Arrays.asList(tokenToPredict);
+        int tokenIdx = tokens.indexOf(tokenToPredict);
+
+        List<Double> probabilities = new ArrayList<>(1);
         probabilities.add((double) prob.getFloat(tokenIdx));
         return new Classifications(tokenClass, probabilities);
     }
@@ -152,7 +145,7 @@ public class FillMaskCustomTranslator implements Translator<String, Classificati
         private HuggingFaceTokenizer tokenizer;
         private String maskedToken = "[MASK]";
         private int topK = 5;
-        private List<String> wordList = new ArrayList<>();
+        private String tokenToPredict = "";
         private Batchifier batchifier = Batchifier.STACK;
 
         Builder(HuggingFaceTokenizer tokenizer) {
@@ -192,8 +185,8 @@ public class FillMaskCustomTranslator implements Translator<String, Classificati
             return this;
         }
 
-        public Builder optWordList(List<String> wordList) {
-            this.wordList = wordList;
+        public Builder optTokenToPredict(String tokenToPredict) {
+            this.tokenToPredict = tokenToPredict;
             return this;
         }
 
@@ -215,8 +208,8 @@ public class FillMaskCustomTranslator implements Translator<String, Classificati
          * @return the new translator
          * @throws IOException if I/O error occurs
          */
-        public FillMaskCustomTranslator build() throws IOException {
-            return new FillMaskCustomTranslator(tokenizer, maskedToken, wordList, topK, batchifier);
+        public PredictTokenTranslator build() throws IOException {
+            return new PredictTokenTranslator(tokenizer, maskedToken, tokenToPredict, topK, batchifier);
         }
     }
 }

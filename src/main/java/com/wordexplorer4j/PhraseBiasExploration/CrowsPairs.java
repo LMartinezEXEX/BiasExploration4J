@@ -1,8 +1,9 @@
-package com.wordexplorer4j.LanguageModel;
+package com.wordexplorer4j.PhraseBiasExploration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Stack;
 
 import org.apache.hadoop.shaded.org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,10 @@ public class CrowsPairs {
     }
 
     public Map<String, Double> compare(List<String> phrases) {
+        if (Objects.isNull(phrases)) {
+            throw new IllegalArgumentException("List of phrases can not be null");
+        }
+
         phrases.forEach(this::check);
 
         List<Double> ranks = new ArrayList<>(phrases.size());                                
