@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -36,7 +37,11 @@ public class NearestNeighbour {
     public Map<String, List<String>> getKNearestNeighbour(List<String> words, int k) {
         if (Objects.isNull(words)) {
             throw new IllegalArgumentException("Word list to calculate neighbours can not be null");
+        } else if (k < 0) {
+            throw new IllegalArgumentException("Number of neighbours to retrive from words, k, should be greater or equal than zero");
         }
+
+        words = filterNonPresentLabeles(words);
 
         INDArray distanceMatrix = Nd4j.zeros(words.size(), this.embeddings.size(0));
 
@@ -65,6 +70,12 @@ public class NearestNeighbour {
         }
 
         return wordsNeighbours;
+    }
+
+    private List<String> filterNonPresentLabeles(List<String> labels) {
+        return labels.stream()
+                    .filter(l -> this.wordsEmbeddingMapping.containsKey(l))
+                    .collect(Collectors.toList());
     }
 
     private Collection<Integer> getKMinIndexes(INDArray features, int k, int currIdx) {

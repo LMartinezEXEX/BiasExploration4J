@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class VecLoader extends DataLoader{
@@ -12,6 +13,12 @@ public class VecLoader extends DataLoader{
 
     @Override
     public void loadDataset(Path path) {
+        if (Objects.isNull(path)) {
+            throw new IllegalArgumentException("Path to .vec extended file can not be null");
+        }
+        if (!path.toString().toLowerCase().endsWith(".vec")) {
+            throw new IllegalArgumentException("Only .vec extended files accepted");
+        }
 
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line = reader.readLine();
@@ -22,7 +29,7 @@ public class VecLoader extends DataLoader{
             }
 
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            throw new IllegalArgumentException("File { " + path.toAbsolutePath() +" } not found");
         }
     }
 

@@ -2,13 +2,14 @@ package com.wordexplorer4j.DataLoader;
 
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class DataLoader {
-    private HashMap<String, double[]> embeddings = new HashMap<>();
+    private Map<String, double[]> embeddings = new HashMap<>();
 
     public abstract void loadDataset(Path path);
 
-    public HashMap<String, double[]> getEmbeddings() {
+    public Map<String, double[]> getEmbeddings() {
         return this.embeddings;
     }
 
