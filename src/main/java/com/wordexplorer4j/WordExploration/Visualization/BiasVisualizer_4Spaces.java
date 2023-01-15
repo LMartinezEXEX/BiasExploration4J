@@ -18,12 +18,24 @@ public class BiasVisualizer_4Spaces extends BiasVisualizer {
     private String downSide;
     
     public BiasVisualizer_4Spaces(List<String> words, double[][] projections, List<String> kernelLeft, List<String> kernelRight, List<String> kernelUp, List<String> kernelDown) {
-        super(words.toArray(String[]::new));
+        super(BiasVisualizer.nonNull(words).toArray(String[]::new));
+        
         if (Objects.isNull(projections)) {
             throw new IllegalArgumentException("Projections array can not be null");
         } else if (Objects.isNull(kernelLeft) || Objects.isNull(kernelRight) ||
                     Objects.isNull(kernelUp) || Objects.isNull(kernelDown)) {
             throw new IllegalArgumentException("Kernels list definition can not be null");
+        } else if (kernelLeft.size() == 0 || kernelRight.size() == 0 ||
+                    kernelUp.size() == 0 || kernelDown.size() == 0) {
+            throw new IllegalArgumentException("Kernels list should not be empty");
+        }
+
+        if (projections.length != 2) {
+            throw new IllegalArgumentException("Projections must have just and only 2 elemens (for x and y)");
+        } else if (projections[0].length != words.size()) {
+            throw new IllegalArgumentException("X projections size (" + projections[0].length + ") differs from amount of words (" + words.size() + ")");
+        } else if (projections[1].length != words.size()) {
+            throw new IllegalArgumentException("Y projections size (" + projections[1].length + ") differs from amount of words (" + words.size() + ")");
         }
 
         this.projections = projections;

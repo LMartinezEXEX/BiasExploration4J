@@ -100,13 +100,13 @@ public class NearestNeighbourTest {
         }
 
         @Test
-        public void serachNeighboursWithNoQuantity() {
+        public void serachZeroNeighbours() {
             List<String> words = Arrays.asList("mujer", "hombre");
             Map<String, List<String>> n_map = nearestNeighbour.getKNearestNeighbour(words, 0);
 
             assertEquals(2, n_map.size());
-            assertEquals(n_map.get("mujer").size(), 0);
-            assertEquals(n_map.get("hombre").size(), 0);
+            assertEquals(0, n_map.get("mujer").size());
+            assertEquals(0, n_map.get("hombre").size());
         }
 
         @Test
@@ -143,8 +143,8 @@ public class NearestNeighbourTest {
             Map<String, List<String>> n_map = nearestNeighbour.getKNearestNeighbour(words, 2);
 
             assertEquals(2, n_map.size());
-            assertIterableEquals(n_map.get("mujer"), Arrays.asList("hombre", "reina"));
-            assertIterableEquals(n_map.get("hombre"), Arrays.asList("mujer", "viejo"));
+            assertIterableEquals(Arrays.asList("hombre", "reina"), n_map.get("mujer"));
+            assertIterableEquals(Arrays.asList("mujer", "viejo"), n_map.get("hombre"));
         }
     }
 }

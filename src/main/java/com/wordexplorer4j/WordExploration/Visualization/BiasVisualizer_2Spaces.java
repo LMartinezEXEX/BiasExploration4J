@@ -20,10 +20,12 @@ public class BiasVisualizer_2Spaces extends BiasVisualizer{
     private String rightSide;
     
     public BiasVisualizer_2Spaces(List<ProjectedWord> proyectedWords, List<String> kernelLeft, List<String> kernelRight) {
-        super(proyectedWords.stream().map(ProjectedWord::getWord).toArray(String[]::new));
+        super(BiasVisualizer.nonNull(proyectedWords).stream().map(ProjectedWord::getWord).toArray(String[]::new));
 
         if (Objects.isNull(kernelLeft) || Objects.isNull(kernelRight)) {
             throw new IllegalArgumentException("Kernels list definition can not be null");
+        } else if (kernelLeft.size() == 0 || kernelRight.size() == 0) {
+            throw new IllegalArgumentException("Kernels list should not be empty");
         }
 
         String[] words = new String[proyectedWords.size()];

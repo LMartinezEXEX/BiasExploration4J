@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -24,6 +25,10 @@ public class BiasExplorer {
     private int embeddingDimension;
 
     public BiasExplorer(WordExplorer wordExplorer) {
+        if (Objects.isNull(wordExplorer)) {
+            throw new IllegalArgumentException("Word explorer object can not be null");
+        }
+
         this.words = wordExplorer.getWordsMap();
         this.embeddingDimension = wordExplorer.getEmbeddingDimension();
     }
@@ -81,6 +86,17 @@ public class BiasExplorer {
     private double[] calculateBias(List<Word> words, List<String> kernel_1, List<String> kernel_2) {
         List<Word> kernel_1_InVocab = getWordsInVocab(kernel_1);
         List<Word> kernel_2_InVocab = getWordsInVocab(kernel_2);
+
+        if (kernel_1_InVocab.isEmpty()) {
+            throw new IllegalArgumentException("Definition of kernel 1 is empty (After removing O.O.V. words)");
+        } else if (kernel_2_InVocab.isEmpty()) {
+            throw new IllegalArgumentException("Definition of kernel 2 is empty (After removing O.O.V. words)");
+        }
+
+        if (kernel_1_InVocab.size() == kernel_2_InVocab.size() && kernel_1_InVocab.containsAll(kernel_2_InVocab)) {
+            String sameWords = String.join(", ", kernel_1_InVocab.stream().map(Word::getWord).collect(Collectors.toList()));
+            throw new IllegalArgumentException("Kernels can not be defined by the same words: " + sameWords);
+        }
 
         INDArray direction = getDirection(kernel_1_InVocab, kernel_2_InVocab);
         return getProjections(words, direction);

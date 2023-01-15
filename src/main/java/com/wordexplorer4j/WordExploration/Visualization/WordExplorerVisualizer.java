@@ -1,6 +1,7 @@
 package com.wordexplorer4j.WordExploration.Visualization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class WordExplorerVisualizer extends Application implements Visualizer{
             throw new IllegalArgumentException("Word list can not be null");
         }
 
-        this.words = words;
+        this.words = Collections.unmodifiableList(words);
     }
     
     @Override

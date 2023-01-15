@@ -33,6 +33,21 @@ public class VecLoaderTest {
     }
 
     @Test
+    public void successfulMultipleVecFileLoadingDiscardingTheLastOne() {
+        Path path = Paths.get("src/test/java/com/wordexplorer4j/data/testShorterEmbeddings.vec");
+        loader.loadDataset(path);
+        
+        assertEquals(5, loader.getEmbeddingDim());
+        assertEquals(5, loader.getEmbeddings().size());
+
+        path = Paths.get("src/test/java/com/wordexplorer4j/data/testEmbeddings.vec");
+        loader.loadDataset(path);
+        
+        assertEquals(300, loader.getEmbeddingDim());
+        assertEquals(5, loader.getEmbeddings().size());
+    }
+
+    @Test
     public void shouldFailWithNullReferencedFile() {
         Path path = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 

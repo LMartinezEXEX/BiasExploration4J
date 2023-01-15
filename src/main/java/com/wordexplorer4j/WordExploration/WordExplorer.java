@@ -29,7 +29,7 @@ public class WordExplorer {
     private int embeddingDimension;
     private NearestNeighbour nearestNeighbour;
 
-    public WordExplorer(HashMap<String, double[]> embeddings) {
+    public WordExplorer(Map<String, double[]> embeddings) {
         if (Objects.isNull(embeddings)) {
             throw new IllegalArgumentException("Embeddings map can not be null");
         }
@@ -51,6 +51,8 @@ public class WordExplorer {
     public WordExplorer(DataLoader data) {
         if (Objects.isNull(data)) {
             throw new IllegalArgumentException("Data loader can not be null");
+        } else if (data.getEmbeddings().size() == 0) {
+            throw new IllegalArgumentException("Data loader has no embedding mapping. May result from omitting a call to loadDataset()");
         }
 
         this.embeddingDimension = data.getEmbeddingDimension();
@@ -141,6 +143,8 @@ public class WordExplorer {
     public void plot(List<String> words, int numberOfNeighbours) {
         if (Objects.isNull(words)) {
             throw new IllegalArgumentException("Word list can not be null");
+        } else if (numberOfNeighbours < 0) {
+            throw new IllegalArgumentException("Number of neighbours to retrive from words, should be greater or equal than zero");
         }
 
         List<Word> wordsInVocab = getWordsInVocab(words);

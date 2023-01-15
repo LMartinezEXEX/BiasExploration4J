@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
@@ -19,6 +20,8 @@ public class VecLoader extends DataLoader{
         if (!path.toString().toLowerCase().endsWith(".vec")) {
             throw new IllegalArgumentException("Only .vec extended files accepted");
         }
+
+        super.embeddings = new HashMap<>();
 
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line = reader.readLine();

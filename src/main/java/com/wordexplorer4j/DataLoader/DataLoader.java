@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class DataLoader {
-    private Map<String, double[]> embeddings = new HashMap<>();
+    protected Map<String, double[]> embeddings = new HashMap<>();
 
     public abstract void loadDataset(Path path);
 

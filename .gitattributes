@@ -1,1 +1,1 @@
-*.vec filter=lfs diff=lfs merge=lfs -text
+100k_es_embedding.vec filter=lfs diff=lfs merge=lfs -text
