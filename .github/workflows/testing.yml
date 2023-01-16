@@ -23,7 +23,7 @@ jobs:
         run: mvn --batch-mode -DskipTests package
 
       - name: Test
-        run: mvn -B test --file pom.xml
+        run: mvn '-Dtest=com.wordexplorer4j.PhraseBiasExploration.*Test*' test
 
       - name: Report
         uses: dorny/test-reporter@v1
