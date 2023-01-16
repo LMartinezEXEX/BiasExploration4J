@@ -25,8 +25,8 @@ import com.wordexplorer4j.SetupExtension;
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.DataLoader.VecLoader;
 
-@Order(10)
 @ExtendWith(SetupExtension.class)
+@Order(10)
 public class WordExplorerTest {
     
     @Test

@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import com.wordexplorer4j.WordExploration.Visualization.Visualizer;
 
-import javafx.application.Platform;
-
 public class SetupExtension implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
 
     @Override

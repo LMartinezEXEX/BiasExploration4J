@@ -20,8 +20,8 @@ import com.wordexplorer4j.DataLoader.VecLoader;
 import com.wordexplorer4j.WordExploration.WordExplorer;
 import com.wordexplorer4j.WordExploration.BiasExploration.BiasExplorer;
 
-@Order(11)
 @ExtendWith(SetupExtension.class)
+@Order(11)
 public class BiasExplorerTest {
     
     @Test
