@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -22,6 +23,7 @@ import com.wordexplorer4j.WordExploration.WordExplorer;
 
 import javafx.stage.Stage;
 
+@Order(7)
 public class WordExplorerVisualizerTest {
     
     @Test

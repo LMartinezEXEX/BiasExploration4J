@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
@@ -26,9 +25,7 @@ import com.wordexplorer4j.SetupExtension;
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.DataLoader.VecLoader;
 
-import javafx.application.Platform;
-
-@Order(5)
+@Order(10)
 @ExtendWith(SetupExtension.class)
 public class WordExplorerTest {
     
@@ -93,11 +90,6 @@ public class WordExplorerTest {
             data.loadDataset(Paths.get("src/test/java/com/wordexplorer4j/data/testEmbeddings.vec"));
 
             this.wordExplorer = new WordExplorer(data);
-        }
-
-        @AfterEach
-        public void clean() {
-            Platform.exit();
         }
 
         @Test

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import com.wordexplorer4j.DataLoader.DataLoader;
@@ -20,6 +21,7 @@ import com.wordexplorer4j.WordExploration.WordExplorer;
 
 import javafx.stage.Stage;
 
+@Order(9)
 public class BiasVisualizer_4SpacesTest {
     
     @Test

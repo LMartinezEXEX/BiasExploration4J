@@ -64,7 +64,7 @@ public class CrowsPairsTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
-            System.out.println("PASA: compareWithNullReferencedPhrases");
+            
             assertTrue(thrown.getMessage().equals("List of phrases can not be null")); 
         }
 
@@ -74,7 +74,7 @@ public class CrowsPairsTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
-            System.out.println("PASA: compareWithBadFormatWholePhrase");
+            
             assertTrue(thrown.getMessage().equals("Sentence { <Can not contain all the phrase surrounded> } is wrongly formatted")); 
         }
 
@@ -85,7 +85,7 @@ public class CrowsPairsTest {
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
-            System.out.println("PASA: compareWithBadFormatEmbeddedSurroundedWords");
+            
             assertTrue(thrown.getMessage().equals("Sentence { Can <not have <embedded>> surrounded words } is wrongly formatted")); 
         }
 
@@ -96,7 +96,6 @@ public class CrowsPairsTest {
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
-                                                            System.out.println(thrown.getMessage());
             assertTrue(thrown.getMessage().equals("Sentence { Can >not have reversed >embedded<< surrounded words } is wrongly formatted")); 
         }
 
@@ -107,7 +106,6 @@ public class CrowsPairsTest {
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
-                                                            System.out.println(thrown.getMessage());
             assertTrue(thrown.getMessage().equals("Sentence { Phrase must be <balanced> with its <surrounded words } is wrongly formatted")); 
         }
 
@@ -118,7 +116,6 @@ public class CrowsPairsTest {
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
-                                                            System.out.println(thrown.getMessage());
             assertTrue(thrown.getMessage().equals("Sentence { Phrase must be >balanced< with its >surrounded words } is wrongly formatted")); 
         }
 
@@ -129,7 +126,6 @@ public class CrowsPairsTest {
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
-                                                            System.out.println(thrown.getMessage());
             assertTrue(thrown.getMessage().equals("Sentence { Phrase can not have no surrounded words } is wrongly formatted")); 
         }
 

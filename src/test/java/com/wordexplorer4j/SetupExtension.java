@@ -16,7 +16,6 @@ public class SetupExtension implements BeforeAllCallback, ExtensionContext.Store
         String uniqueKey = this.getClass().getName();
         Object value = context.getRoot().getStore(GLOBAL).get(uniqueKey);
         if (value == null) {
-            // First test container invocation.
             context.getRoot().getStore(GLOBAL).put(uniqueKey, this);
             setup();
         }
