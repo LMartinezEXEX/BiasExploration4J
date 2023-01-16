@@ -3,10 +3,9 @@ package com.wordexplorer4j.WordExploration.Visualization;
 import java.util.List;
 import java.util.Objects;
 
-import javafx.application.Application;
 import javafx.stage.Stage;
 
-public abstract class BiasVisualizer extends Application implements Visualizer{
+public abstract class BiasVisualizer extends Visualizer {
 
     private String[] words;
 

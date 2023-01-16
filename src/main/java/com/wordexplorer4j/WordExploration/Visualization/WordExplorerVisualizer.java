@@ -8,24 +8,19 @@ import java.util.Objects;
 
 import com.wordexplorer4j.WordExploration.Word;
 
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
-public class WordExplorerVisualizer extends Application implements Visualizer{
-    public static List<Word> wordsToPlot;
+public class WordExplorerVisualizer extends Visualizer{
 
     private List<Word> words;
 
     public WordExplorerVisualizer() {
         this.words = new ArrayList<>();
     }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {}
 
     public WordExplorerVisualizer(List<Word> words) {
         if (Objects.isNull(words)) {
@@ -72,6 +67,10 @@ public class WordExplorerVisualizer extends Application implements Visualizer{
     }
 
     private NumberAxis getAxis(int i) {
+        if (words.size() == 0) {
+            return new NumberAxis(-1, 1, 0.1);
+        }
+
         int min = (int) Math.floor(words.stream().map(w -> w.getPca(i)).min(Comparator.naturalOrder()).get());
         int max = (int) Math.ceil(words.stream().map(w -> w.getPca(i)).max(Comparator.naturalOrder()).get());
 

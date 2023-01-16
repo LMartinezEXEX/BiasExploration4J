@@ -13,6 +13,7 @@ import com.wordexplorer4j.PhraseBiasExploration.LanguageModel;
 import com.wordexplorer4j.PhraseBiasExploration.MaskFillerRanker;
 import com.wordexplorer4j.WordExploration.WordExplorer;
 import com.wordexplorer4j.WordExploration.BiasExploration.BiasExplorer;
+import com.wordexplorer4j.WordExploration.Visualization.Visualizer;
 
 import ai.djl.MalformedModelException;
 import ai.djl.repository.zoo.ModelNotFoundException;
@@ -25,14 +26,15 @@ import javafx.application.Platform;
  */
 public class App 
 {
-    public static void main( String[] args ) throws ModelNotFoundException, MalformedModelException, IOException, TranslateException {
+    public static void main( String[] args ) {
         DataLoader data = new VecLoader();
         data.loadDataset(Paths.get("BiasExploration4J/src/main/java/com/wordexplorer4j/data/100k_es_embedding.vec"));
 
         //WordExplorer we = new WordExplorer(data);
         //we.calculateWordsPca(false);
 
-        //we.plot(Arrays.asList("perro", "mujer", "hombre", "chico", "papaya21"), 4);
+        Visualizer.setup();
+        //we.plot(Arrays.asList("perro", "mujer", "hombre", "chico", "papaya21"));
         //we.plot(Arrays.asList("lagarto"));
         //we.plot(Arrays.asList("muchahco", "campo", "enfermero"));
 
@@ -63,11 +65,9 @@ public class App
 
         /*
         BiasExplorer be = new BiasExplorer(we);
-        be.plot4SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
+        be.plot2SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
                           Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"), 
-                          Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino"),
-                          Arrays.asList("joven", "inmaduro", "niño", "crio"),
-                          Arrays.asList("viejo", "maduro", "anciano", "adulto")
+                          Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino")
                         );
         */
     }

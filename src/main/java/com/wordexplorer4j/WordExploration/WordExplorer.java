@@ -18,9 +18,7 @@ import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.NearestNeighbour.NearestNeighbour;
 import com.wordexplorer4j.WordExploration.Visualization.WordExplorerVisualizer;
 
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 
 public class WordExplorer {
@@ -45,7 +43,6 @@ public class WordExplorer {
         }
 
         wordsMap = Collections.unmodifiableMap(wordsMap);
-        initPlotter();
     }
 
     public WordExplorer(DataLoader data) {
@@ -63,7 +60,6 @@ public class WordExplorer {
         }
 
         wordsMap = Collections.unmodifiableMap(wordsMap);
-        initPlotter();
     }
 
     public void calculateWordsPca(boolean normalize) {
@@ -171,13 +167,6 @@ public class WordExplorer {
             }
         }
         return wordsInVocab;
-    }
-
-    @SuppressWarnings("unused")
-    private void initPlotter() {
-        Platform.setImplicitExit(false);
-        final JFXPanel fxPanel = new JFXPanel();
-        new Thread(() -> Application.launch(WordExplorerVisualizer.class)).start();
     }
 
     public Map<String, Word> getWordsMap() {

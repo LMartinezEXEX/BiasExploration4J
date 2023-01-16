@@ -8,15 +8,23 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.wordexplorer4j.SetupExtension;
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.DataLoader.VecLoader;
 import com.wordexplorer4j.WordExploration.WordExplorer;
 import com.wordexplorer4j.WordExploration.BiasExploration.BiasExplorer;
 
+import javafx.application.Platform;
+
+@Order(6)
+@ExtendWith(SetupExtension.class)
 public class BiasExplorerTest {
     
     @Test
@@ -39,6 +47,11 @@ public class BiasExplorerTest {
             data.loadDataset(Paths.get("src/test/java/com/wordexplorer4j/data/testEmbeddings.vec"));
 
             this.biasExplorer = new BiasExplorer(new WordExplorer(data));
+        }
+
+        @AfterEach
+        public void clean() {
+            Platform.exit();
         }
 
         @Test

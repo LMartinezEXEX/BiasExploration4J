@@ -14,14 +14,22 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 
+import com.wordexplorer4j.SetupExtension;
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.DataLoader.VecLoader;
 
+import javafx.application.Platform;
+
+@Order(5)
+@ExtendWith(SetupExtension.class)
 public class WordExplorerTest {
     
     @Test
@@ -85,6 +93,11 @@ public class WordExplorerTest {
             data.loadDataset(Paths.get("src/test/java/com/wordexplorer4j/data/testEmbeddings.vec"));
 
             this.wordExplorer = new WordExplorer(data);
+        }
+
+        @AfterEach
+        public void clean() {
+            Platform.exit();
         }
 
         @Test
@@ -215,6 +228,8 @@ public class WordExplorerTest {
         @Test
         public void plotWithoutNeighbours() {
             List<String> words = Arrays.asList("hombre");
+            this.wordExplorer.calculateWordsPca(false);
+
             assertDoesNotThrow(() -> this.wordExplorer.plot(words));
         }
 
@@ -222,6 +237,8 @@ public class WordExplorerTest {
         public void plotWithNeighbours() {
             List<String> words = Arrays.asList("hombre");
             int numberOfNeighbours = 2;
+            this.wordExplorer.calculateWordsPca(false);
+
             assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
         }
 
@@ -229,6 +246,8 @@ public class WordExplorerTest {
         public void plotWithZeroNeighbours() {
             List<String> words = Arrays.asList("hombre");
             int numberOfNeighbours = 0;
+            this.wordExplorer.calculateWordsPca(false);
+
             assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
         }
 
@@ -236,6 +255,8 @@ public class WordExplorerTest {
         public void plotWithOOVWords() {
             List<String> words = Arrays.asList("hombre", "papaya21");
             int numberOfNeighbours = 2;
+            this.wordExplorer.calculateWordsPca(false);
+
             assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
         }
 
@@ -243,6 +264,8 @@ public class WordExplorerTest {
         public void plotOnlyOOVWords() {
             List<String> words = Arrays.asList("papaya21", "carcaj2d");
             int numberOfNeighbours = 2;
+            this.wordExplorer.calculateWordsPca(false);
+            
             assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
         }
     }

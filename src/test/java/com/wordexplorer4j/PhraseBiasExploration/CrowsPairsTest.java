@@ -11,8 +11,10 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
+@Order(1)
 public class CrowsPairsTest {
     
     @Test
@@ -47,7 +49,7 @@ public class CrowsPairsTest {
     }
 
     @Nested
-    public class WithBeforeInitialization {
+    public class WithBeforeeeeInitialization {
 
         private CrowsPairs cp = null;
 
@@ -62,7 +64,7 @@ public class CrowsPairsTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
-
+            System.out.println("PASA: compareWithNullReferencedPhrases");
             assertTrue(thrown.getMessage().equals("List of phrases can not be null")); 
         }
 
@@ -72,7 +74,7 @@ public class CrowsPairsTest {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
-
+            System.out.println("PASA: compareWithBadFormatWholePhrase");
             assertTrue(thrown.getMessage().equals("Sentence { <Can not contain all the phrase surrounded> } is wrongly formatted")); 
         }
 
@@ -83,7 +85,7 @@ public class CrowsPairsTest {
                                                             () -> this.cp.compare(phrases),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
-                                                            System.out.println(thrown.getMessage());
+            System.out.println("PASA: compareWithBadFormatEmbeddedSurroundedWords");
             assertTrue(thrown.getMessage().equals("Sentence { Can <not have <embedded>> surrounded words } is wrongly formatted")); 
         }
 

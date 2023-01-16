@@ -72,6 +72,7 @@ public class BiasExplorer {
         List<String> kernel_3_InVocab = getStringsInVocab(kernel_3);
         List<String> kernel_4_InVocab = getStringsInVocab(kernel_4);
 
+        words = wordsInVocab.stream().map(Word::getWord).collect(Collectors.toList());
         plot(words, 
             projections, 
             kernel_1_InVocab, 
