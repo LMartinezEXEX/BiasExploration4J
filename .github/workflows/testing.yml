@@ -23,4 +23,4 @@ jobs:
         run: mvn --batch-mode -DskipTests package
 
       - name: Test
-        run: mvn '-Dtest=com.wordexplorer4j.PhraseBiasExploration.*Test*' test
+        run: mvn '-Dtest=com.biasexplorer4j.PhraseBiasExploration.*Test*' test
