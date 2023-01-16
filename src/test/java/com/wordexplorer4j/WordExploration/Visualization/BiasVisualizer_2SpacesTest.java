@@ -1,4 +1,4 @@
-package com.wordexplorer4j.WordExplorer.Visualization;
+package com.wordexplorer4j.WordExploration.Visualization;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,7 +19,6 @@ import com.wordexplorer4j.DataLoader.VecLoader;
 import com.wordexplorer4j.WordExploration.Word;
 import com.wordexplorer4j.WordExploration.WordExplorer;
 import com.wordexplorer4j.WordExploration.BiasExploration.ProjectedWord;
-import com.wordexplorer4j.WordExploration.Visualization.BiasVisualizer_2Spaces;
 
 import javafx.stage.Stage;
 

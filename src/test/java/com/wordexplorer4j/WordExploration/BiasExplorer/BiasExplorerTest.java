@@ -1,4 +1,4 @@
-package com.wordexplorer4j.WordExplorer.BiasExplorer;
+package com.wordexplorer4j.WordExploration.BiasExplorer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

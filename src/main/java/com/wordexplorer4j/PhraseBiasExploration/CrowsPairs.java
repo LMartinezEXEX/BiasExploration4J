@@ -59,6 +59,9 @@ public class CrowsPairs {
         for (int i = 0; i < phrase.length(); ++i) {
             char c = phrase.charAt(i);
             if (c == '<') {
+                if (!stack.isEmpty() && stack.pop() != '>') {
+                    return false;
+                }
                 stack.push(c);
             } else if (c == '>') {
                 if (stack.isEmpty() || stack.pop() != '<' || phrase.charAt(i-1) == '<') {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,10 @@ public class LanguageModel {
     }
 
     public LanguageModel(String modelUrl) {
+        if (Objects.isNull(modelUrl)) {
+            throw new IllegalArgumentException("Model URL string can not be null");
+        }
+
         Criteria<String, Classifications> criteria = Criteria.builder()
                 .setTypes(String.class, Classifications.class)
                 .optModelUrls(modelUrl)
@@ -38,17 +43,24 @@ public class LanguageModel {
 
         try {
             model = criteria.loadModel();
-        } catch (ModelNotFoundException | MalformedModelException | IOException e) {
-            System.out.println("Error during model loading.");
-            e.printStackTrace();
+        } catch (ModelNotFoundException e) {
+            throw new IllegalArgumentException("Model not found");
+        } catch (MalformedModelException | IOException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
 
         setTokenizer();
     }
 
     public double rank(List<String> processedPhrases, List<String> validTokens) {
-        if (processedPhrases.size() != validTokens.size()) {
-            throw new IllegalArgumentException("There must be a phrase for each valid token");
+        if (Objects.isNull(processedPhrases)) {
+            throw new IllegalArgumentException("Processed phrases list can not be null");
+        } else if (Objects.isNull(validTokens)) {
+            throw new IllegalArgumentException("Valid tokens list can not be null");
+        } else if (processedPhrases.size() != validTokens.size()) {
+            throw new IllegalArgumentException("Different amount of processed phrases (" 
+                                                + processedPhrases.size() + ") and valid tokens (" + 
+                                                validTokens.size() + ") encounteres");
         }
 
         double rank = 0.0;
@@ -60,7 +72,7 @@ public class LanguageModel {
                 rank +=  Math.log10(res.getProbability());
 
             } catch (TranslateException e) {
-                e.printStackTrace();
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
 
@@ -68,6 +80,10 @@ public class LanguageModel {
     }
 
     public List<String> getTop5(String phrase) {
+        if (Objects.isNull(phrase)) {
+            throw new IllegalArgumentException("Phrase can not be null");
+        }
+
         Translator<String, Classifications> translator = getTranslator();
         Predictor<String, Classifications> predictor = model.newPredictor(translator);
 
@@ -78,15 +94,20 @@ public class LanguageModel {
                 topKWords.add(c.getClassName());
             }
         } catch (TranslateException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(e.getMessage());
         }
 
         return topKWords;
     }
 
     public List<String> processInput(String phrase) {
+        if (Objects.isNull(phrase)) {
+            throw new IllegalArgumentException("Phrase can not be null");
+        }
+
+        phrase = phrase.replace(",", " , ").replace(".", " . ").replace("?", " ? ").replace("!", " ! ");
         List<String> surroundedWords = getSurroundedWords(phrase);
-        String maskedPhrase = getMaskedPhrase(phrase);
+        String maskedPhrase = maskSurroundedWords(phrase);
 
         List<String> phrasesToSubmit = new ArrayList<>();
         String[] maskedPhraseTokens = maskedPhrase.split(" ");
@@ -118,7 +139,7 @@ public class LanguageModel {
         return surroundedWords;
     }
 
-    private String getMaskedPhrase(String phrase) {
+    private String maskSurroundedWords(String phrase) {
         Matcher m = pattern.matcher(phrase);
         return m.replaceAll("[PAD]");
     }
@@ -138,7 +159,11 @@ public class LanguageModel {
     }
 
     public List<String> getValidTokens(String phrase) {
-        String maskedPhrase = getMaskedPhrase(phrase);
+        if (Objects.isNull(phrase)) {
+            throw new IllegalArgumentException("Phrase can not be null");
+        }
+
+        String maskedPhrase = maskSurroundedWords(phrase);
         return getAndProcessTokens(maskedPhrase);
     }
 
@@ -149,10 +174,6 @@ public class LanguageModel {
         tokens.removeAll(Collections.singleton("[SEP]"));
         tokens.removeAll(Collections.singleton("[PAD]"));
         return tokens;
-    }
-
-    public HuggingFaceTokenizer getTokenizer() {
-        return this.tokenizer;
     }
 
     private void setTokenizer() {

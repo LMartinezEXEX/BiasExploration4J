@@ -1,4 +1,4 @@
-package com.wordexplorer4j.WordExplorer;
+package com.wordexplorer4j.WordExploration;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,8 +21,6 @@ import org.nd4j.linalg.exception.ND4JIllegalStateException;
 
 import com.wordexplorer4j.DataLoader.DataLoader;
 import com.wordexplorer4j.DataLoader.VecLoader;
-import com.wordexplorer4j.WordExploration.Word;
-import com.wordexplorer4j.WordExploration.WordExplorer;
 
 public class WordExplorerTest {
     
