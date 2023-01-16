@@ -62,10 +62,10 @@ public class WordExplorerTest {
         Map<String, double[]> map = new HashMap<>(10);
         for (int i = 0; i < 9; ++i) {
             String token = "token_" + i;
-            double[] embedding = DoubleStream.generate(() -> new Random().nextDouble(1)).limit(normalEmbeddingSize).toArray();
+            double[] embedding = DoubleStream.generate(() -> new Random().nextDouble()).limit(normalEmbeddingSize).toArray();
             map.put(token, embedding);
         }
-        map.put("Irregular embedding", DoubleStream.generate(() -> new Random().nextDouble(1)).limit(irregularEmbeddingSize).toArray());
+        map.put("Irregular embedding", DoubleStream.generate(() -> new Random().nextDouble()).limit(irregularEmbeddingSize).toArray());
 
         ND4JIllegalStateException thrown = assertThrows(ND4JIllegalStateException.class, 
                                                             () -> new WordExplorer(map),
