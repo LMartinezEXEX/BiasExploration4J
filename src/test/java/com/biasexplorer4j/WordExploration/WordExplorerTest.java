@@ -95,16 +95,8 @@ public class WordExplorerTest {
         }
 
         @Test
-        public void assureWordsMapIsInmutable() {
-            Map<String, Word> wordsMap = this.wordExplorer.getWordsMap();
-            assertThrows(UnsupportedOperationException.class, 
-                        () -> wordsMap.put("Should Fail", null),
-                        "Expectedt UnsupportedOperationException but not thrown");
-        }
-
-        @Test
         public void correctDimensionSetting() {
-            assertEquals(300, this.wordExplorer.getEmbeddingDimension());
+            assertEquals(300, this.wordExplorer.getVocabulary().getEmbeddingDimension());
         }
 
         @Test
@@ -126,11 +118,11 @@ public class WordExplorerTest {
 
         @Test
         public void correctPCACalculationWithoutNormalization() {
-            this.wordExplorer.calculateWordsPca(true);
-            Word word = wordExplorer.getWordsMap().get("mujer");
+            this.wordExplorer.calculateWordsPca(false);
+            Word word = wordExplorer.getVocabulary().get("mujer");
             
-            assertEquals(0.3253998453426682, word.getPca(0));
-            assertEquals(0.47227102629952966, word.getPca(1));
+            assertEquals(-0.01724, word.getPca(0), 0.0001);
+            assertEquals(0.63126, word.getPca(1), 0.0001);
         }
 
         @Test

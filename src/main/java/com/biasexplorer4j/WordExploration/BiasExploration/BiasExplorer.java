@@ -13,22 +13,22 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
+import com.biasexplorer4j.WordExploration.Vocabulary;
 import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.WordExplorer;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PLOT_TYPE;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 
 public class BiasExplorer {
-    private Map<String, Word> words;
-    private int embeddingDimension;
+
+    private Vocabulary vocabulary;
 
     public BiasExplorer(WordExplorer wordExplorer) {
         if (Objects.isNull(wordExplorer)) {
             throw new IllegalArgumentException("Word explorer object can not be null");
         }
 
-        this.words = wordExplorer.getWordsMap();
-        this.embeddingDimension = wordExplorer.getEmbeddingDimension();
+        this.vocabulary = wordExplorer.getVocabulary();
     }
 
     public double[] plot2SpaceBias(List<String> words, List<String> kernel_1, List<String> kernel_2) {
@@ -36,7 +36,7 @@ public class BiasExplorer {
             throw new IllegalArgumentException("No list of words can be null");
         }
 
-        List<Word> wordsInVocab = getWordsInVocab(words);
+        List<Word> wordsInVocab = vocabulary.get(words);
         double[] projections = calculateBias(wordsInVocab, kernel_1, kernel_2);
 
         List<ProjectedWord> projectedWords = new ArrayList<>(wordsInVocab.size());
@@ -46,8 +46,8 @@ public class BiasExplorer {
         Collections.sort(projectedWords);
 
         plot(projectedWords, 
-            getStringsInVocab(kernel_1),
-            getStringsInVocab(kernel_2)
+            vocabulary.filterInVocab(kernel_1),
+            vocabulary.filterInVocab(kernel_2)
             );
 
         return projections;
@@ -59,16 +59,16 @@ public class BiasExplorer {
             throw new IllegalArgumentException("No list of words can be null");
         }
 
-        List<Word> wordsInVocab = getWordsInVocab(words);
+        List<Word> wordsInVocab = vocabulary.get(words);
         double[] projections_x = calculateBias(wordsInVocab, kernel_1, kernel_2);
         double[] projections_y = calculateBias(wordsInVocab, kernel_3, kernel_4);
 
         double[][] projections = new double[][] { projections_x, projections_y };
 
-        List<String> kernel_1_InVocab = getStringsInVocab(kernel_1);
-        List<String> kernel_2_InVocab = getStringsInVocab(kernel_2);
-        List<String> kernel_3_InVocab = getStringsInVocab(kernel_3);
-        List<String> kernel_4_InVocab = getStringsInVocab(kernel_4);
+        List<String> kernel_1_InVocab = vocabulary.filterInVocab(kernel_1);
+        List<String> kernel_2_InVocab = vocabulary.filterInVocab(kernel_2);
+        List<String> kernel_3_InVocab = vocabulary.filterInVocab(kernel_3);
+        List<String> kernel_4_InVocab = vocabulary.filterInVocab(kernel_4);
 
         words = wordsInVocab.stream().map(Word::getWord).collect(Collectors.toList());
         plot(words, 
@@ -83,8 +83,8 @@ public class BiasExplorer {
     }
 
     private double[] calculateBias(List<Word> words, List<String> kernel_1, List<String> kernel_2) {
-        List<Word> kernel_1_InVocab = getWordsInVocab(kernel_1);
-        List<Word> kernel_2_InVocab = getWordsInVocab(kernel_2);
+        List<Word> kernel_1_InVocab = vocabulary.get(kernel_1);
+        List<Word> kernel_2_InVocab = vocabulary.get(kernel_2);
 
         if (kernel_1_InVocab.isEmpty()) {
             throw new IllegalArgumentException("Definition of kernel 1 is empty (After removing O.O.V. words)");
@@ -111,7 +111,7 @@ public class BiasExplorer {
     }
 
     private INDArray getNormedSumEmbeddOf(List<Word> list) {
-        INDArray group_1 = Nd4j.zeros(1, embeddingDimension);
+        INDArray group_1 = Nd4j.zeros(1, vocabulary.getEmbeddingDimension());
         for (Word word : list) {
             group_1.addi(word.getEmbedding());
         }
@@ -165,31 +165,5 @@ public class BiasExplorer {
         arguments.put("drawOriginAxis", true);
 
         PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments);
-    }
-
-    private List<Word> getWordsInVocab(List<String> words) {
-        List<Word> wordsInVocab = new ArrayList<>(words.size());
-        for (String word : words) {
-            if (this.words.containsKey(word)) {
-                wordsInVocab.add(this.words.get(word));
-            } else {
-                System.out.println("[WARN]  BiasExplorer : Word { " + word + " } is not in vocabulary.");
-            }
-        }
-
-        return wordsInVocab;
-    }
-
-    private List<String> getStringsInVocab(List<String> words) {
-        List<String> wordsInVocab = new ArrayList<>(words.size());
-        for (String word : words) {
-            if (this.words.containsKey(word)) {
-                wordsInVocab.add(word);
-            } else {
-                System.out.println("[WARN]  BiasExplorer : Word { " + word + " } is not in vocabulary.");
-            }
-        }
-
-        return wordsInVocab;
     }
 }

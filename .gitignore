@@ -28,4 +28,4 @@ hs_err_pid*
 /.project
 /.settings
 /.classpath
-data/100k_es_embedding.vec
+App.java
