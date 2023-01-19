@@ -66,13 +66,7 @@ we.we.calculateWordsPca(false);
 
 > **Note**: This method takes as parameter a `boolean` in order to normalize (`true`) the word embeddings or don't (`false`).
 
-Now you have almost everithing you need to plot, but remains a **crucial** part as of the current version and that is to start JavaFx thread, this is achieved with a call to the `Visualizer` static method `setup()`
-
-```java
-Visualizer().setup();
-```
-
-Now you can plot words from this class and BiasExplorer. Lets plot the words defined before with their respective neigbours.
+Now you can plot words from this class. Let's plot the words defined before with their respective neighbours.
 
 ```java
 we.plot(Arrays.asList("man", "woman"), 2);
@@ -150,8 +144,6 @@ Map<String, Double> pllScores = mfr.compare(stereotype);
 // print the scores
 // ...
 ```
-
-> **IMPORTANT**: Currently the WordExploration package and PhraseBiasExploration package should not be used in the same JVM run because of conclicts between DJL and JavaFx. This would be fixed in a later release! ;D
 
 ## License Information 
 This project is under a [MIT license](LICENSE).
