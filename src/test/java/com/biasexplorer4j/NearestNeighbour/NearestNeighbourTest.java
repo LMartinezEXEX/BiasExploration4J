@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -22,7 +21,6 @@ import org.nd4j.linalg.factory.Nd4j;
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
 
-@Order(5)
 public class NearestNeighbourTest {
     
     @Test

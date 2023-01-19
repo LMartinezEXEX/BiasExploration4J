@@ -11,10 +11,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-@Order(1)
 public class CrowsPairsTest {
     
     @Test

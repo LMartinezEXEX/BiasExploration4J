@@ -2,6 +2,7 @@ package com.biasexplorer4j.WordExploration.BiasExploration;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,11 +15,8 @@ import org.nd4j.linalg.ops.transforms.Transforms;
 
 import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.WordExplorer;
-import com.biasexplorer4j.WordExploration.Visualization.BiasVisualizer_2Spaces;
-import com.biasexplorer4j.WordExploration.Visualization.BiasVisualizer_4Spaces;
-
-import javafx.application.Platform;
-import javafx.stage.Stage;
+import com.biasexplorer4j.WordExploration.Visualization.Plots.PLOT_TYPE;
+import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 
 public class BiasExplorer {
     private Map<String, Word> words;
@@ -131,23 +129,42 @@ public class BiasExplorer {
     }
 
     private void plot(List<ProjectedWord> projectedWords, List<String> kernelLeft, List<String> kernelRight) {
-        Platform.runLater(() -> {
-            try {
-                new BiasVisualizer_2Spaces(projectedWords, kernelLeft, kernelRight).plot(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        String[] words = projectedWords.stream().map(ProjectedWord::getWord).toArray(String[]::new);
+        double[] projections = projectedWords.stream().mapToDouble(ProjectedWord::getProjection).toArray();
+        String title = "2 Spaces word projection";
+        String xAxisLabel = "";
+        String yAxisLabel = "← " + String.join(", ", kernelLeft) + "      " + String.join(", ", kernelRight) + " →";
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("words", words);
+        arguments.put("projections", projections);
+        arguments.put("title", title);
+        arguments.put("xAxisLabel", xAxisLabel);
+        arguments.put("yAxisLabel", yAxisLabel);
+
+        PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments);
     }
 
     private void plot(List<String> words, double[][] projections, List<String> kernelLeft, List<String> kernelRight, List<String> kernelUp, List<String> kernelDown) {
-        Platform.runLater(() -> {
-            try {
-                new BiasVisualizer_4Spaces(words, projections, kernelLeft, kernelRight, kernelUp, kernelDown).plot(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        String[] wordsArray = words.toArray(String[]::new);
+        double[] xAxisLimits = new double[] {-1, 1};
+        double[] yAxisLimits = new double[] {-1, 1};
+        String title = "4 Spaces word projection";
+        String xAxisLabel = "← " + String.join(", ", kernelRight) + "      " + String.join(", ", kernelLeft) + " →";
+        String yAxisLabel = "← " + String.join(", ", kernelDown) + "      " + String.join(", ", kernelUp) + " →";
+        
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("words", wordsArray);
+        arguments.put("projections", projections);
+        arguments.put("xAxisLimits", xAxisLimits);
+        arguments.put("yAxisLimits", yAxisLimits);
+        arguments.put("title", title);
+        arguments.put("xAxisLabel", xAxisLabel);
+        arguments.put("yAxisLabel", yAxisLabel);
+        arguments.put("labelPoints", true);
+        arguments.put("drawOriginAxis", true);
+
+        PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments);
     }
 
     private List<Word> getWordsInVocab(List<String> words) {

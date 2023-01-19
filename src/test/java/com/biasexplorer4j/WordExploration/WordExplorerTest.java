@@ -14,19 +14,16 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.DoubleStream;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 
-import com.biasexplorer4j.SetupExtension;
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
+import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 
-@ExtendWith(SetupExtension.class)
-@Order(10)
 public class WordExplorerTest {
     
     @Test
@@ -90,6 +87,11 @@ public class WordExplorerTest {
             data.loadDataset(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
 
             this.wordExplorer = new WordExplorer(data);
+        }
+
+        @AfterEach
+        public void clean() {
+            PlotManager.getInstance().cleanUp();
         }
 
         @Test

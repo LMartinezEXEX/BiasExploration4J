@@ -12,15 +12,13 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.NearestNeighbour.NearestNeighbour;
-import com.biasexplorer4j.WordExploration.Visualization.WordExplorerVisualizer;
+import com.biasexplorer4j.WordExploration.Visualization.Plots.PLOT_TYPE;
+import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.dimensionalityreduction.PCA;
-
-import javafx.application.Platform;
-import javafx.stage.Stage;
 
 public class WordExplorer {
 
@@ -127,14 +125,26 @@ public class WordExplorer {
         if (Objects.isNull(words)) {
             throw new IllegalArgumentException("Word list can not be null");
         }
+        List<Word> wordsInVocab = getWordsInVocab(words);
+        String[] strInVocab = wordsInVocab.stream().map(Word::getWord).toArray(String[]::new);
+        double[][] projections = new double[2][wordsInVocab.size()];
+        for (int i = 0; i < wordsInVocab.size(); ++i) {
+            projections[0][i] = wordsInVocab.get(i).getPca(0);
+            projections[1][i] = wordsInVocab.get(i).getPca(1);
+        }
+        String title = "Word Embedding in 2D";
+        String xAxisLabel = "";
+        String yAxisLabel = "";
 
-        Platform.runLater(() -> {
-            try {
-                new WordExplorerVisualizer(getWordsInVocab(words)).plot(new Stage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("words", strInVocab);
+        arguments.put("projections", projections);
+        arguments.put("title", title);
+        arguments.put("xAxisLabel", xAxisLabel);
+        arguments.put("yAxisLabel", yAxisLabel);
+        arguments.put("labelPoints", true);
+
+        PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments);
     }
 
     public void plot(List<String> words, int numberOfNeighbours) {
@@ -163,6 +173,18 @@ public class WordExplorer {
         for (String w : words) {
             if (this.getWordsMap().containsKey(w)) {
                 wordsInVocab.add(this.getWordsMap().get(w));
+            } else {
+                System.out.println("[WARN]  WordExplorer : Word { " + w + " } is not in vocabulary.");
+            }
+        }
+        return wordsInVocab;
+    }
+
+    private List<String> getStringsInVocab(List<String> words) {
+        List<String> wordsInVocab = new ArrayList<>(words.size());
+        for (String w : words) {
+            if (this.getWordsMap().containsKey(w)) {
+                wordsInVocab.add(w);
             } else {
                 System.out.println("[WARN]  WordExplorer : Word { " + w + " } is not in vocabulary.");
             }

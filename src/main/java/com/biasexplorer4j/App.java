@@ -13,12 +13,13 @@ import com.biasexplorer4j.PhraseBiasExploration.LanguageModel;
 import com.biasexplorer4j.PhraseBiasExploration.MaskFillerRanker;
 import com.biasexplorer4j.WordExploration.WordExplorer;
 import com.biasexplorer4j.WordExploration.BiasExploration.BiasExplorer;
-import com.biasexplorer4j.WordExploration.Visualization.Visualizer;
+import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 
 import ai.djl.MalformedModelException;
 import ai.djl.repository.zoo.ModelNotFoundException;
 import ai.djl.translate.TranslateException;
 import javafx.application.Platform;
+import java.awt.EventQueue;
 
 /**
  * Hello world!
@@ -30,13 +31,21 @@ public class App
         DataLoader data = new VecLoader();
         data.loadDataset(Paths.get("BiasExploration4J/src/main/java/com/biasexplorer4j/data/100k_es_embedding.vec"));
 
-        //WordExplorer we = new WordExplorer(data);
-        //we.calculateWordsPca(false);
+        WordExplorer we = new WordExplorer(data);
+        we.calculateWordsPca(false);
 
-        Visualizer.setup();
-        //we.plot(Arrays.asList("perro", "mujer", "hombre", "chico", "papaya21"));
+        we.plot(Arrays.asList("perro", "mujer", "hombre", "chico", "papaya21"));
         //we.plot(Arrays.asList("lagarto"));
         //we.plot(Arrays.asList("muchahco", "campo", "enfermero"));
+
+        //var ex = new Prueba2();
+        //ex.setVisible(true);
+        //var ex2 = new Prueba();
+        //ex2.setVisible(true);
+        //EventQueue.invokeLater(() -> {
+        //    var ex = new Prueba2();
+        //    ex.setVisible(true);
+        //});
 
         //List<String> wordsToExplore = Arrays.asList("viejo", "mujer", "hombre", "rey", "reina");
         //we.plot(wordsToExplore);
@@ -54,21 +63,21 @@ public class App
         }
          */
 
-        /*
+        
         MaskFillerRanker mf = new MaskFillerRanker();
         Map<String, Double> pllScores = mf.compare("The [MASK] people are sozoszo poor", Arrays.asList("native", "black"));
         for(Map.Entry<String, Double> e : pllScores.entrySet()) {
             System.out.println("PLL score for {" + e.getKey() + "}: " + e.getValue());
         }
-        */
-        //Platform.exit();
-
-        /*
+        
         BiasExplorer be = new BiasExplorer(we);
-        be.plot2SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
+        be.plot4SpaceBias(Arrays.asList("rey", "reina", "chico", "princesa", "viejo", "mujer", "negro"), 
                           Arrays.asList("hombre", "chico", "el", "padre", "hijo", "masculino"), 
-                          Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino")
+                          Arrays.asList("mujer", "chica", "ella", "madre", "hija", "femenino"),
+                          Arrays.asList("joven", "chico", "inmaduro"),
+                          Arrays.asList("viejo", "maduro", "anciano", "adulto")
                         );
-        */
+        
+        //PlotManager.getInstance().cleanUp();
     }
 }
