@@ -27,8 +27,12 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+        
+    - name: Install xvfb
+      run: sudo apt-get install xvfb
+      
+    - name: Build with Maven and
+      run: xvfb-run --auto-servernum mvn -B package --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
