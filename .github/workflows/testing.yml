@@ -18,9 +18,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          
+      - name: Install xvfb
+        run: sudo apt-get install xvfb
 
       - name: Build
         run: mvn --batch-mode -DskipTests package
-
-      - name: Test
-        run: mvn test
+        
+      - name: Test with xvfb
+        run: xvfb-run --auto-servernum mvn test
