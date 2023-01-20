@@ -6,13 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class DataLoader {
-    private Map<String, double[]> embeddings;
+    private Map<String, double[]> embeddings = new HashMap<>();
     private int embeddingDimension;
 
     public abstract void loadDataset(Path path);
 
-    protected void init() {
+    protected void reset() {
         this.embeddings = new HashMap<>();
+        this.embeddingDimension = 0;
     }
 
     protected Map<String, double[]> getModifiableEmbeddings() {

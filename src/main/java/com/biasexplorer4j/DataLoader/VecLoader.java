@@ -25,7 +25,7 @@ public class VecLoader extends DataLoader{
             throw new IllegalArgumentException("Only .vec extended files accepted");
         }
 
-        super.init();
+        super.reset();
 
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line = reader.readLine();
