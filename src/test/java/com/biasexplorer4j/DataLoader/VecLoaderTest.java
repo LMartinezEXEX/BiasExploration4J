@@ -29,7 +29,7 @@ public class VecLoaderTest {
         Path path = Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec");
         loader.loadDataset(path);
         
-        assertEquals(300, loader.getEmbeddingDim());
+        assertEquals(300, loader.getEmbeddingDimension());
         assertEquals(5, loader.getEmbeddings().size());
     }
 
@@ -38,13 +38,13 @@ public class VecLoaderTest {
         Path path = Paths.get("src/test/java/com/biasexplorer4j/data/testShorterEmbeddings.vec");
         loader.loadDataset(path);
         
-        assertEquals(5, loader.getEmbeddingDim());
+        assertEquals(5, loader.getEmbeddingDimension());
         assertEquals(5, loader.getEmbeddings().size());
 
         path = Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec");
         loader.loadDataset(path);
         
-        assertEquals(300, loader.getEmbeddingDim());
+        assertEquals(300, loader.getEmbeddingDimension());
         assertEquals(5, loader.getEmbeddings().size());
     }
 

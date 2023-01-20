@@ -1,27 +1,33 @@
 package com.biasexplorer4j.DataLoader;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class DataLoader {
-    protected Map<String, double[]> embeddings = new HashMap<>();
+    private Map<String, double[]> embeddings;
+    private int embeddingDimension;
 
     public abstract void loadDataset(Path path);
 
-    public Map<String, double[]> getEmbeddings() {
+    protected void init() {
+        this.embeddings = new HashMap<>();
+    }
+
+    protected Map<String, double[]> getModifiableEmbeddings() {
         return this.embeddings;
     }
 
-    public void setEmbeddings(HashMap<String, double[]> embeddings) {
-        this.embeddings = embeddings;
+    protected void setEmbeddingDimension(int embeddingDimension) {
+        this.embeddingDimension = embeddingDimension;
+    }
+
+    public Map<String, double[]> getEmbeddings() {
+        return Collections.unmodifiableMap(this.embeddings);
     }
 
     public int getEmbeddingDimension() {
-        for (double[] d : embeddings.values()) {
-            return d.length;
-        }
-
-        return 0;
+        return this.embeddingDimension;
     }
 }

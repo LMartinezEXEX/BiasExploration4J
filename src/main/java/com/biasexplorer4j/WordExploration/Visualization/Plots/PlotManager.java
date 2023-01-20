@@ -69,6 +69,7 @@ public class PlotManager {
         for (JFrame frame : plots) {
             frame.dispose();
         }
+        plots = new ArrayList<>();
     }
 
     private <T> T getOrDefault(Map<String, ?> map, String key, T defaultValue, Class<T> expectedClass) {

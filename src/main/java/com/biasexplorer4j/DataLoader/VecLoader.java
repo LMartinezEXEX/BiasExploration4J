@@ -5,12 +5,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class VecLoader extends DataLoader{
-    private int embeddingDim;
+
+    public VecLoader() {}
+
+    public VecLoader(Path path) {
+        loadDataset(path);
+    }
 
     @Override
     public void loadDataset(Path path) {
@@ -21,11 +25,11 @@ public class VecLoader extends DataLoader{
             throw new IllegalArgumentException("Only .vec extended files accepted");
         }
 
-        super.embeddings = new HashMap<>();
+        super.init();
 
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line = reader.readLine();
-            this.setEmbeddingDim(Integer.parseInt(line.split(" ")[1]));
+            super.setEmbeddingDimension(Integer.parseInt(line.split(" ")[1]));
 
             while ((line = reader.readLine()) != null) {
                 process_line(line);
@@ -39,16 +43,12 @@ public class VecLoader extends DataLoader{
     private void process_line(String readLine) {
         String[] components = readLine.split(" ");
 
-        if (getEmbeddingDim() == 0)
-            setEmbeddingDim(components.length - 1);
-        else {
-            if (components.length - 1 != getEmbeddingDim()) 
-                throw new IllegalArgumentException("Diferent embeddings sizes encountered!");
-        }
+        if (components.length - 1 != super.getEmbeddingDimension()) 
+            throw new IllegalArgumentException("Diferent embeddings sizes encountered!");
 
         String word = components[0];
         double[] embedding = parseToEmbedding(components);
-        super.getEmbeddings().put(word, embedding);
+        super.getModifiableEmbeddings().put(word, embedding);
     }
 
     private double[] parseToEmbedding(String[] coords) {
@@ -56,13 +56,4 @@ public class VecLoader extends DataLoader{
                         .mapToDouble(i -> Double.parseDouble(coords[i]))
                         .toArray();
     }
-
-    private void setEmbeddingDim(int embeddingDim) {
-        this.embeddingDim = embeddingDim;
-    }
-
-    public int getEmbeddingDim() {
-        return embeddingDim;
-    }
-    
 }

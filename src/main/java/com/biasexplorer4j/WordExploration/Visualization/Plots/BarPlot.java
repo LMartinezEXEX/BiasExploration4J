@@ -56,6 +56,7 @@ public class BarPlot extends JFrame {
         add(chartPanel);
         pack();
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.chart = chart;
     }

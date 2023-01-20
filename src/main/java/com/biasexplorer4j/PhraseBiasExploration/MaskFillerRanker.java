@@ -18,6 +18,10 @@ public class MaskFillerRanker {
         this.lm = new LanguageModel(modelUrl);
     }
 
+    public MaskFillerRanker(LanguageModel languageModel) {
+        this.lm = languageModel;
+    }
+
     public Map<String, Double> compare(String phrase) {
         if (Objects.isNull(phrase)) {
             throw new IllegalArgumentException("Phrase can not be null");
