@@ -20,7 +20,7 @@ public class LanguageModelTest {
         String modelURL = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new LanguageModel(modelURL),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Model URL string can not be null"));   
     }
@@ -30,7 +30,7 @@ public class LanguageModelTest {
         String modelURL = "invalidModelURL";
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new LanguageModel(modelURL),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Model not found")); 
     }
@@ -62,7 +62,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.getTop5(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase can not be null"));
             
@@ -74,7 +74,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.getTop5(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Mask token [MASK] not found."));
             
@@ -86,7 +86,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.getTop5(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Only one mask supported."));
         }
@@ -106,7 +106,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.processInput(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase can not be null"));
             
@@ -172,7 +172,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.getValidTokens(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase can not be null"));
         }
@@ -205,7 +205,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.rank(processedPrases, validTokens),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Processed phrases list can not be null"));
         }
@@ -217,7 +217,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.rank(processedPrases, validTokens),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Valid tokens list can not be null"));
         }
@@ -229,7 +229,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.rank(processedPrases, validTokens),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Different amount of processed phrases (4) and valid tokens (3) encounteres"));
         }
@@ -245,7 +245,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.rank(processedPrases, validTokens),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Mask token [MASK] not found."));
         }
@@ -261,7 +261,7 @@ public class LanguageModelTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.lm.rank(processedPrases, validTokens),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Only one mask supported."));
         }

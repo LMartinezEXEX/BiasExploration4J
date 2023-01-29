@@ -7,6 +7,9 @@ import java.util.Objects;
 
 import javax.swing.JFrame;
 
+import com.biasexplorer4j.WordExploration.WordToPlot;
+import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
+
 public class PlotManager {
     
     private static PlotManager instance;
@@ -22,14 +25,14 @@ public class PlotManager {
         return instance;
     }
 
-    public boolean plot(PLOT_TYPE type, Map<String, ?> arguments) {
+    public <T extends WordToPlot> boolean plot(PLOT_TYPE type, Map<String, ?> arguments, List<WordList<T>> wordLists) {
         switch (type) {
             case BAR:
-                JFrame barFrame = barPlot(arguments);
+                JFrame barFrame = barPlot(arguments, wordLists);
                 return plots.add(barFrame);
             
             case SCATTER:
-                JFrame scatterFrame = scatterPlot(arguments);
+                JFrame scatterFrame = scatterPlot(arguments, wordLists);
                 return plots.add(scatterFrame);
 
             default:
@@ -37,21 +40,25 @@ public class PlotManager {
         }
     }
 
-    private JFrame barPlot(Map<String, ?> arguments) {
-        String[] words       = getOrDefault(arguments, "words", null, String[].class);
-        double[] projections = getOrDefault(arguments, "projections", null, double[].class);
+    private <T extends WordToPlot> JFrame barPlot(Map<String, ?> arguments, List<WordList<T>> wordLists) {
+        if (Objects.isNull(wordLists) || wordLists.size() == 0) {
+            throw new IllegalArgumentException("Must provide one word list to plot");
+        }
+
         String title         = getOrDefault(arguments, "title", "", String.class);
         String xAxisLabel    = getOrDefault(arguments, "xAxisLabel", "", String.class);
         String yAxisLabel    = getOrDefault(arguments, "yAxisLabel", "", String.class);
 
-        BarPlot plot = new BarPlot(words, projections, title, xAxisLabel, yAxisLabel);
+        BarPlot<T> plot = new BarPlot<T>(wordLists.get(0), title, xAxisLabel, yAxisLabel);
         plot.setVisible(true);
         return plot;
     }
 
-    private JFrame scatterPlot(Map<String, ?> arguments) {
-        String[] words         = getOrDefault(arguments, "words", null, String[].class);
-        double[][] projections = getOrDefault(arguments, "projections", null, double[][].class);
+    private <T extends WordToPlot> JFrame scatterPlot(Map<String, ?> arguments, List<WordList<T>> wordLists) {
+        if (Objects.isNull(wordLists) || wordLists.size() == 0) {
+            throw new IllegalArgumentException("Must provide at least one word list to plot");
+        }
+
         double[] xAxisLimits   = getOrDefault(arguments, "xAxisLimits", null, double[].class);
         double[] yAxisLimits   = getOrDefault(arguments, "yAxisLimits", null, double[].class);
         String title           = getOrDefault(arguments, "title", "", String.class);
@@ -60,7 +67,7 @@ public class PlotManager {
         boolean labelXYPoints  = getOrDefault(arguments, "labelPoints", false, Boolean.class);
         boolean drawOriginAxis = getOrDefault(arguments, "drawOriginAxis", false, Boolean.class);
 
-        ScatterPlot plot = new ScatterPlot(words, projections, title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, drawOriginAxis);
+        ScatterPlot<T> plot = new ScatterPlot<T>(wordLists, title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, drawOriginAxis);
         plot.setVisible(true);
         return plot;
     }

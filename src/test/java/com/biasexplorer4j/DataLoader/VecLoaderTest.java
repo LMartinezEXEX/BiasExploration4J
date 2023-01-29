@@ -53,7 +53,7 @@ public class VecLoaderTest {
         Path path = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                         () -> loader.loadDataset(path),
-                                                        "Expectedt IllegalArgumentException but not thrown");
+                                                        "Expected IllegalArgumentException but not thrown");
                           
         assertTrue(thrown.getMessage().equals("Path to .vec extended file can not be null"));
     }
@@ -63,7 +63,7 @@ public class VecLoaderTest {
         Path path = Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.csv");
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                         () -> loader.loadDataset(path),
-                                                        "Expectedt IllegalArgumentException but not thrown");
+                                                        "Expected IllegalArgumentException but not thrown");
                           
         assertTrue(thrown.getMessage().equals("Only .vec extended files accepted"));
     }
@@ -73,7 +73,7 @@ public class VecLoaderTest {
         Path path = Paths.get("dummyPath.vec");
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                         () -> loader.loadDataset(path),
-                                                        "Expectedt IllegalArgumentException but not thrown");
+                                                        "Expected IllegalArgumentException but not thrown");
                           
         assertTrue(thrown.getMessage().equals("File { " + path.toAbsolutePath() +" } not found"));
     }
@@ -84,7 +84,7 @@ public class VecLoaderTest {
         
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                         () -> loader.loadDataset(path),
-                                                        "Expectedt IllegalArgumentException but not thrown");
+                                                        "Expected IllegalArgumentException but not thrown");
         assertTrue(thrown.getMessage().equals("Diferent embeddings sizes encountered!"));
     }
 

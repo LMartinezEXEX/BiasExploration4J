@@ -20,7 +20,7 @@ public class MaskFillerRankerTest {
         String modelURL = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new MaskFillerRanker(modelURL),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Model URL string can not be null"));  
     }
@@ -30,7 +30,7 @@ public class MaskFillerRankerTest {
         String modelURL = "invalidModelURL";
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new MaskFillerRanker(modelURL),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Model not found")); 
     }
@@ -63,7 +63,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase, words),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase can not be null")); 
         }
@@ -75,7 +75,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase, words),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Word list to fill sentence can not be null")); 
         }
@@ -87,7 +87,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase, words),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase must contain a `[MASK]` token to replace with the words list")); 
         }
@@ -99,7 +99,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase, words),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase may contain only one `[MASK]` token")); 
         }
@@ -132,7 +132,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Phrase can not be null")); 
         }
@@ -143,7 +143,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
             
             assertTrue(thrown.getMessage().equals("Mask token [MASK] not found.")); 
         }
@@ -154,7 +154,7 @@ public class MaskFillerRankerTest {
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.mfr.compare(phrase),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Only one mask supported.")); 
         }

@@ -27,7 +27,7 @@ public class NearestNeighbourTest {
     public void testNullInstantiation() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                         () -> new NearestNeighbour(null),
-                                                        "Expectedt IllegalArgumentException but not thrown");
+                                                        "Expected IllegalArgumentException but not thrown");
                           
         assertTrue(thrown.getMessage().equals("Labeled Points can not be null"));
     }
@@ -58,7 +58,7 @@ public class NearestNeighbourTest {
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                         () -> new NearestNeighbour(map),
-                                                        "Expectedt IllegalArgumentException but not thrown");
+                                                        "Expected IllegalArgumentException but not thrown");
                           
         assertTrue(thrown.getMessage().equals("Length of both arrays must be equal"));
     }
@@ -86,7 +86,7 @@ public class NearestNeighbourTest {
         public void serachNeighboursWithNullList() {
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> nearestNeighbour.getKNearestNeighbour(null, 3),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
                             
             assertTrue(thrown.getMessage().equals("Word list to calculate neighbours can not be null"));
         }
@@ -114,7 +114,7 @@ public class NearestNeighbourTest {
             List<String> words = Arrays.asList("mujer", "hombre");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> nearestNeighbour.getKNearestNeighbour(words, -1),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
                             
             assertTrue(thrown.getMessage().equals("Number of neighbours to retrive from words, k, should be greater or equal than zero"));
         }
@@ -132,7 +132,7 @@ public class NearestNeighbourTest {
             List<String> words = Arrays.asList("mujer");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> nearestNeighbour.getKNearestNeighbour(words, 100),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Can't retrieve more neighbours than words used to initialize this object"));
         }

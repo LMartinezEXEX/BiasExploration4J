@@ -9,28 +9,26 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import com.biasexplorer4j.WordExploration.WordToPlot;
+import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
+
 import java.awt.Color;
 import java.util.Objects;
 
-public class BarPlot extends JFrame {
+public class BarPlot<T extends WordToPlot>  extends JFrame {
 
-    private String[] words;
-    private double[] projections;
+    private WordList<T> wordList;
     private String title;
     private String xAxisLabel;
     private String yAxisLabel;
     private JFreeChart chart;
     
-    protected BarPlot(String[] words, double[] projections, String title, String xAxisLabel, String yAxisLabel) {
-        if (Objects.isNull(words)) {
-            throw new IllegalArgumentException("Words to plot list can not be null");
-        }
-        if (Objects.isNull(projections)) {
-            throw new IllegalArgumentException("Words projection list can not be null");
+    protected BarPlot(WordList<T> wordList, String title, String xAxisLabel, String yAxisLabel) {
+        if (Objects.isNull(wordList)) {
+            throw new IllegalArgumentException("Word list to plot can not be null");
         }
 
-        this.words = words.clone();
-        this.projections = projections.clone();
+        this.wordList = wordList;
         this.title = title;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
@@ -62,20 +60,21 @@ public class BarPlot extends JFrame {
     }
 
     private DefaultCategoryDataset createDataset() {
-        if (words.length != projections.length) {
-            throw new IllegalArgumentException("Words to plot list size (" + 
-                                                words.length + 
-                                                ") and projections list size (" +
-                                                projections.length +
-                                                ") must be equal");
-        }
-
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        for (int i = 0; i < words.length; ++i) {
-            double projection = projections[i];
-            String colorDefiningKey = (projection < 0.0) ? "Neg" : "Pos";
-            dataset.addValue(-projection, colorDefiningKey, words[i]);
+        for (T projectedWord : this.wordList) {
+            double[] projections = projectedWord.getProjectionToPlot();
+            String word = projectedWord.getToken();
+            if (Objects.isNull(projections)) {
+                throw new IllegalArgumentException("Projection for word: { " + word + " } is null");
+            } else if (projections.length == 0) {
+                throw new IllegalArgumentException("For bar plot all words must have at least 1 " +
+                                                        "projection value. Word { " + 
+                                                        word + 
+                                                        " } has: 0");
+            }
+            String colorDefiningKey = (projections[0] < 0.0) ? "Neg" : "Pos";
+            dataset.addValue(-projections[0], colorDefiningKey, word);
         }
         return dataset;
     }

@@ -20,7 +20,7 @@ public class CrowsPairsTest {
         String modelURL = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new CrowsPairs(modelURL),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Model URL string can not be null"));  
     }
@@ -30,7 +30,7 @@ public class CrowsPairsTest {
         String modelURL = "invalidModelURL";
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new CrowsPairs(modelURL),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Model not found")); 
     }
@@ -61,7 +61,7 @@ public class CrowsPairsTest {
             List<String> phrases = null;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
             
             assertTrue(thrown.getMessage().equals("List of phrases can not be null")); 
         }
@@ -71,7 +71,7 @@ public class CrowsPairsTest {
             List<String> phrases = Arrays.asList("<Can not contain all the phrase surrounded>");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
             
             assertTrue(thrown.getMessage().equals("Sentence { <Can not contain all the phrase surrounded> } is wrongly formatted")); 
         }
@@ -81,7 +81,7 @@ public class CrowsPairsTest {
             List<String> phrases = Arrays.asList("Can <not have <embedded>> surrounded words");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             
             assertTrue(thrown.getMessage().equals("Sentence { Can <not have <embedded>> surrounded words } is wrongly formatted")); 
@@ -92,7 +92,7 @@ public class CrowsPairsTest {
             List<String> phrases = Arrays.asList("Can >not have reversed >embedded<< surrounded words");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Sentence { Can >not have reversed >embedded<< surrounded words } is wrongly formatted")); 
         }
@@ -102,7 +102,7 @@ public class CrowsPairsTest {
             List<String> phrases = Arrays.asList("Phrase must be <balanced> with its <surrounded words");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Sentence { Phrase must be <balanced> with its <surrounded words } is wrongly formatted")); 
         }
@@ -112,7 +112,7 @@ public class CrowsPairsTest {
             List<String> phrases = Arrays.asList("Phrase must be >balanced< with its >surrounded words");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Sentence { Phrase must be >balanced< with its >surrounded words } is wrongly formatted")); 
         }
@@ -122,7 +122,7 @@ public class CrowsPairsTest {
             List<String> phrases = Arrays.asList("Phrase can not have no surrounded words");
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.cp.compare(phrases),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Sentence { Phrase can not have no surrounded words } is wrongly formatted")); 
         }

@@ -3,77 +3,45 @@ package com.biasexplorer4j.WordExploration;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.stream.DoubleStream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.nd4j.linalg.exception.ND4JIllegalStateException;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
+import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
+import com.biasexplorer4j.WordExploration.Vocabulary.Word;
+import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class WordExplorerTest {
     
     @Test
-    public void instantiateWithNullReferenceMap() {
-        Map<String, double[]> map = null;
+    public void instantiateWithNullReferenceVocabulary() {
+        Vocabulary vocabulary = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new WordExplorer(map),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> new WordExplorer(vocabulary),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-        assertTrue(thrown.getMessage().equals("Embeddings map can not be null"));
+        assertTrue(thrown.getMessage().equals("Vocabulary can not be null"));
     }
 
-    @Test
-    public void instantiateWithNullReferenceDataLoader() {
-        DataLoader data = null;
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new WordExplorer(data),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+    @Test 
+    public void succesfulInstatiation() {
+        DataLoader data = new VecLoader(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
+        Vocabulary vocabulary = new Vocabulary(data);
 
-        assertTrue(thrown.getMessage().equals("Data loader can not be null"));
-    }
-
-    @Test
-    public void instantiateWithNonLoadedDataLoader() {
-        DataLoader data = new VecLoader();
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new WordExplorer(data),
-                                                            "Expectedt IllegalArgumentException but not thrown");
-
-        assertTrue(thrown.getMessage().equals("Data loader has no embedding mapping. May result from omitting a call to loadDataset()"));
-    }
-
-    @Test
-    public void instantiateWithIrregularEmbeddingSizes() {
-        int normalEmbeddingSize = 30;
-        int irregularEmbeddingSize = 10;
-
-        Map<String, double[]> map = new HashMap<>(10);
-        for (int i = 0; i < 9; ++i) {
-            String token = "token_" + i;
-            double[] embedding = DoubleStream.generate(() -> new Random().nextDouble()).limit(normalEmbeddingSize).toArray();
-            map.put(token, embedding);
-        }
-        map.put("Irregular embedding", DoubleStream.generate(() -> new Random().nextDouble()).limit(irregularEmbeddingSize).toArray());
-
-        ND4JIllegalStateException thrown = assertThrows(ND4JIllegalStateException.class, 
-                                                            () -> new WordExplorer(map),
-                                                            "Expectedt ND4JIllegalStateException but not thrown");
-
-        assertTrue(thrown.getMessage().equals("Shape of the new array [1, " + normalEmbeddingSize + "] doesn't match data length: " + irregularEmbeddingSize + " - prod(shape) must equal the number of values provided"));
+        assertDoesNotThrow(() -> new WordExplorer(vocabulary));
     }
 
     @Nested
@@ -83,10 +51,10 @@ public class WordExplorerTest {
 
         @BeforeEach
         public void setup() {
-            DataLoader data = new VecLoader();
-            data.loadDataset(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
+            DataLoader data = new VecLoader(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
+            Vocabulary vocabulary = new Vocabulary(data);
 
-            this.wordExplorer = new WordExplorer(data);
+            this.wordExplorer = new WordExplorer(vocabulary);
         }
 
         @AfterEach
@@ -126,133 +94,162 @@ public class WordExplorerTest {
         }
 
         @Test
-        public void getNeighboursOfNullList() {
-            List<String> words = null; 
+        public void getNeighboursWithNullReferencedWordList() {
+            List<WordList<Word>> lists = null;
             int k = 3;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> this.wordExplorer.getNeighbours(words, k),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> this.wordExplorer.getNeighbours(lists, k),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-            assertTrue(thrown.getMessage().equals("Word list can not be null"));
+            assertTrue(thrown.getMessage().equals("Must provide at least one word list to plot"));
         }
 
         @Test
-        public void getNeighboursOfEmptyList() {
-            List<String> words = Arrays.asList();
+        public void getNeighboursOfSingleWordList() {
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
             int k = 3;
-            Map<String, List<String>> n_map = this.wordExplorer.getNeighbours(words, k);
+            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
-            assertEquals(0, n_map.size());
+            assertEquals(1, n_map.size());
+            assertEquals(3, n_map.get(lists.get(0)).size());
+            assertIterableEquals(Arrays.asList("mujer", "viejo", "rey"), n_map.get(lists.get(0)));
+        }
+        
+        @Test
+        public void getNeighboursOfSingleWordListWithOOVWords() {
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre", "papaya21"));
+            int k = 1;
+            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+
+            assertEquals(1, n_map.size());
+            assertEquals(1, n_map.get(lists.get(0)).size());
+            assertIterableEquals(Arrays.asList("mujer"), n_map.get(lists.get(0)));
         }
 
+        @Test
+        public void getNeighboursOfMultipleWordList() {
+            WordList<Word> list_1 = this.wordExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList<Word> list_2 = this.wordExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList<Word> list_3 = this.wordExplorer.getVocabulary().getWordList("adulto", "viejo", "mayor", "maduro");
+            
+            List<WordList<Word>> lists = Arrays.asList(list_1, list_2, list_3);
+            int k = 3;
+            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+
+            assertEquals(3, n_map.size());
+            assertEquals(3, n_map.get(lists.get(0)).size());
+            assertIterableEquals(Arrays.asList("mujer", "viejo", "rey"), n_map.get(lists.get(0)));
+
+            assertEquals(3, n_map.get(lists.get(1)).size());
+            assertIterableEquals(Arrays.asList("hombre", "reina", "viejo"), n_map.get(lists.get(1)));
+
+            assertEquals(3, n_map.get(lists.get(2)).size());
+            assertIterableEquals(Arrays.asList("hombre", "rey", "reina"), n_map.get(lists.get(2)));
+        }
+        
         @Test
         public void getZeroNeighboursFromList() {
-            List<String> words = Arrays.asList("hombre", "mujer");
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
             int k = 0;
-            Map<String, List<String>> n_map = this.wordExplorer.getNeighbours(words, k);
+            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
-            assertEquals(2, n_map.size());
-            assertEquals(0, n_map.get("hombre").size());
-            assertEquals(0, n_map.get("mujer").size());
+            assertEquals(1, n_map.size());
+            assertEquals(0, n_map.get(lists.get(0)).size());
         }
 
         @Test
         public void getNeighboursWithNegativeQuantity() {
-            List<String> words = Arrays.asList("hombre", "mujer");
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
             int k = -2;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> this.wordExplorer.getNeighbours(words, k),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> this.wordExplorer.getNeighbours(lists, k),
+                                                            "Expected IllegalArgumentException but not thrown");
 
             assertTrue(thrown.getMessage().equals("Number of neighbours to retrive from words, k, should be greater or equal than zero"));
         }
 
         @Test
-        public void getNeighboursWithOOVWords() {
-            List<String> words = Arrays.asList("hombre", "mujer", "papaya21");
-            int k = 1;
-            Map<String, List<String>> n_map = this.wordExplorer.getNeighbours(words, k);
-
-            assertEquals(2, n_map.size());
-            assertEquals(1, n_map.get("hombre").size());
-            assertEquals(1, n_map.get("mujer").size());
-            assertFalse(n_map.containsKey("papaya21"));
-        }
-
-        @Test
         public void whenSerachingForOneNeighbourIsNotTheSameWord() {
-            List<String> words = Arrays.asList("hombre");
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
             int k = 1;
-            Map<String, List<String>> n_map = this.wordExplorer.getNeighbours(words, k);
+            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
             assertEquals(1, n_map.size());
-            assertEquals(1, n_map.get("hombre").size());
-            assertFalse(n_map.get("hombre").get(0).equals("hombre"));
+            assertEquals(1, n_map.get(lists.get(0)).size());
+            assertFalse(n_map.get(lists.get(0)).get(0).equals("hombre"));
         }
 
         @Test
-        public void plotNullList() {
-            List<String> words = null;
+        public void plotNullReferencedWordList() {
+            List<WordList<Word>> lists = null;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> this.wordExplorer.plot(words),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> this.wordExplorer.plot(lists),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-            assertTrue(thrown.getMessage().equals("Word list can not be null"));
+            assertTrue(thrown.getMessage().equals("Must provide at least one non-null word list to plot"));
         }
 
         @Test
         public void plotWithNegativeNumberOfNeighbours() {
-            List<String> words = Arrays.asList("hombre");
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
             int numberOfNeighbours = -2;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> this.wordExplorer.plot(words, numberOfNeighbours),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> this.wordExplorer.plot(lists, numberOfNeighbours),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-            assertTrue(thrown.getMessage().equals("Number of neighbours to retrive from words, should be greater or equal than zero"));
+            assertTrue(thrown.getMessage().equals("Number of neighbours to retrive from words, k, should be greater or equal than zero"));
         }
 
         @Test
         public void plotWithoutNeighbours() {
-            List<String> words = Arrays.asList("hombre");
             this.wordExplorer.calculateWordsPca(false);
 
-            assertDoesNotThrow(() -> this.wordExplorer.plot(words));
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
+
+            assertDoesNotThrow(() -> this.wordExplorer.plot(lists));
         }
 
         @Test
-        public void plotWithNeighbours() {
-            List<String> words = Arrays.asList("hombre");
-            int numberOfNeighbours = 2;
+        public void plotWithWordListWithNeighboursAndVerifyChangeInWordList() {
             this.wordExplorer.calculateWordsPca(false);
 
-            assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
+            int numberOfNeighbours = 2;
+
+            assertDoesNotThrow(() -> this.wordExplorer.plot(lists, numberOfNeighbours));
+            assertIterableEquals(Arrays.asList("hombre", "mujer", "viejo"), lists.get(0).getWordList());
         }
 
         @Test
         public void plotWithZeroNeighbours() {
-            List<String> words = Arrays.asList("hombre");
-            int numberOfNeighbours = 0;
             this.wordExplorer.calculateWordsPca(false);
 
-            assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre"));
+            int numberOfNeighbours = 0;
+
+            assertDoesNotThrow(() -> this.wordExplorer.plot(lists, numberOfNeighbours));
+            assertIterableEquals(Arrays.asList("hombre"), lists.get(0).getWordList());
         }
 
         @Test
         public void plotWithOOVWords() {
-            List<String> words = Arrays.asList("hombre", "papaya21");
-            int numberOfNeighbours = 2;
             this.wordExplorer.calculateWordsPca(false);
 
-            assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
-        }
-
-        @Test
-        public void plotOnlyOOVWords() {
-            List<String> words = Arrays.asList("papaya21", "carcaj2d");
+            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+                                                                        .getWordList("masculino", "hombre", "papaya21"));
             int numberOfNeighbours = 2;
-            this.wordExplorer.calculateWordsPca(false);
-            
-            assertDoesNotThrow(() -> this.wordExplorer.plot(words, numberOfNeighbours));
+
+            assertDoesNotThrow(() -> this.wordExplorer.plot(lists, numberOfNeighbours));
+            assertIterableEquals(Arrays.asList("hombre", "mujer", "viejo"), lists.get(0).getWordList());
         }
     }
 }

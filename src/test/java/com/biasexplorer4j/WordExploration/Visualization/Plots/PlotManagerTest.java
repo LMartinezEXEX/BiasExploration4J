@@ -4,11 +4,22 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import com.biasexplorer4j.DataLoader.DataLoader;
+import com.biasexplorer4j.DataLoader.VecLoader;
+import com.biasexplorer4j.WordExploration.BiasExploration.BiasExplorer;
+import com.biasexplorer4j.WordExploration.BiasExploration.ProjectedWord;
+import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
+import com.biasexplorer4j.WordExploration.Vocabulary.Word;
+import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class PlotManagerTest {
 
@@ -24,99 +35,99 @@ public class PlotManagerTest {
 
     @Test
     public void generateBarPlotSuccessfully() {
-        String[] words = new String[] {"hombre", "mujer"};
-        double[] projections = new double[] {-0.42, 0.54};
+        DataLoader data = new VecLoader(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
+        Vocabulary vocabulary = new Vocabulary(data);
+        BiasExplorer be = new BiasExplorer(vocabulary);
 
-        Map<String, Object> arguments = new HashMap<>(2);
-        arguments.put("words", words);
-        arguments.put("projections", projections);
+        ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", new double[] {0.45}), 
+                                                      new ProjectedWord("mujer", new double[] {-0.45})
+                                                    };
 
-        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments));
+        WordList<ProjectedWord> wordList = be.getVocabulary().getWordList("Test", words);
+
+        Map<String, Object> arguments = new HashMap<>(0);
+
+        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments, Arrays.asList(wordList)));
     }
 
     @Test
-    public void failBarPlotWhenWordListArgumentIsNotAStringArray() {
-        float words = 45.2f;
-        double[] projections = new double[] {-0.42, 0.54};
-
-        Map<String, Object> arguments = new HashMap<>(2);
-        arguments.put("words", words);
-        arguments.put("projections", projections);
+    public void failBarPlotWhenNullReferencedWordList() {
+        List<WordList<Word>> wordLists = null;
+        Map<String, Object> arguments = new HashMap<>(0);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments, wordLists),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-        assertTrue(thrown.getMessage().equals("Words to plot list can not be null"));
+        assertTrue(thrown.getMessage().equals("Must provide one word list to plot"));
     }
 
     @Test
-    public void failBarPlotWhenProjectionArrayNotPassed() {
-        String[] words = new String[] {"hombre", "mujer"};
-
-        Map<String, Object> arguments = new HashMap<>(2);
-        arguments.put("words", words);
+    public void failBarPlotWhenListOfWordListIsEmpty() {
+        List<WordList<Word>> wordLists = Arrays.asList();
+        Map<String, Object> arguments = new HashMap<>(0);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments, wordLists),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-        assertTrue(thrown.getMessage().equals("Words projection list can not be null"));
+        assertTrue(thrown.getMessage().equals("Must provide one word list to plot"));
     }
 
     @Test
-    public void failScatterPlotWhenWordListIsNotAStringArray() {
-        float words = 45.2f;
-        double[][] projections = new double[][] { new double[] {-0.42, 0.54}, new double[] {-0.12, 0.22} };
+    public void failScatterPlotWhenNullReferencedWordList() {
+        List<WordList<Word>> wordLists = null;
 
-        Map<String, Object> arguments = new HashMap<>(2);
-        arguments.put("words", words);
-        arguments.put("projections", projections);
+        Map<String, Object> arguments = new HashMap<>(0);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments, wordLists),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-        assertTrue(thrown.getMessage().equals("Words to plot list can not be null"));
+        assertTrue(thrown.getMessage().equals("Must provide at least one word list to plot"));
     }
 
     @Test
-    public void failScatterPlotWhenProjectionArrayIsTheTypeExpected() {
-        String[] words = new String[] {"hombre", "mujer"};
-        double[] projections = new double[] { -0.42, 0.54 };
+    public void failScatterPlotWhenWordListIsEmpty() {
+        List<WordList<Word>> wordLists = Arrays.asList();
 
-        Map<String, Object> arguments = new HashMap<>(2);
-        arguments.put("words", words);
-        arguments.put("projections", projections);
+        Map<String, Object> arguments = new HashMap<>(0);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            () -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments, wordLists),
+                                                            "Expected IllegalArgumentException but not thrown");
 
-        assertTrue(thrown.getMessage().equals("Words projection list can not be null"));
+        assertTrue(thrown.getMessage().equals("Must provide at least one word list to plot"));
     }
 
     @Test
     public void cleaningDoesNotThrow() {
-        String[] words = new String[] {"hombre", "mujer"};
-        double[][] scatterProjections = new double[][] { new double[] {-0.42, 0.54}, new double[] {-0.12, 0.22} };
+        DataLoader data = new VecLoader(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
+        Vocabulary vocabulary = new Vocabulary(data);
+        BiasExplorer be = new BiasExplorer(vocabulary);
 
-        Map<String, Object> arguments = new HashMap<>(2);
-        arguments.put("words", words);
-        arguments.put("projections", scatterProjections);
+        ProjectedWord[] scatterWords = new ProjectedWord[] { new ProjectedWord("hombre", new double[] {0.45, 0.86}), 
+                                                             new ProjectedWord("mujer", new double[] {-0.45, 0.12})
+                                                           };
 
-        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments));
-        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments));
-        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments));
+        WordList<ProjectedWord> scatterWordList = be.getVocabulary().getWordList("Test", scatterWords);
 
-        words = new String[] {"hombre", "mujer"};
-        double[] barProjections = new double[] { -0.42, 0.54 };
+        Map<String, Object> scatterArguments = new HashMap<>(0);
 
-        arguments.put("words", words);
-        arguments.put("projections", barProjections);
+        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, scatterArguments, Arrays.asList(scatterWordList)));
+        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, scatterArguments, Arrays.asList(scatterWordList)));
+        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, scatterArguments, Arrays.asList(scatterWordList)));
 
-        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments));
-        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments));
+        ProjectedWord[] barWords = new ProjectedWord[] { new ProjectedWord("hombre", new double[] {0.45}), 
+                                                         new ProjectedWord("mujer", new double[] {-0.45})
+                                                       };
+
+        WordList<ProjectedWord> barWordList = be.getVocabulary().getWordList("Test", barWords);
+
+        Map<String, Object> barArguments = new HashMap<>(0);
+
+        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, barArguments, Arrays.asList(barWordList)));
+        assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.BAR, barArguments, Arrays.asList(barWordList)));
 
         assertDoesNotThrow(() -> PlotManager.getInstance().cleanUp());
     }

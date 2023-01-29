@@ -1,21 +1,19 @@
-package com.biasexplorer4j.WordExploration;
+package com.biasexplorer4j.WordExploration.Vocabulary;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 
-public class Word {
+import com.biasexplorer4j.WordExploration.WordToPlot;
+
+public class Word implements WordToPlot{
 
     private String word;
     private INDArray embedding;
     private INDArray pca;
 
-    public Word(String word, INDArray embedding) {
+    protected Word(String word, INDArray embedding) {
         this.word = word;
         this.embedding = embedding;
-    }
-
-    public double getPca(int coord) {
-        return this.getPca().getDouble(1, coord);
     }
 
     public INDArray normalizeEmbedding(NormalizerStandardize normalizer) {
@@ -37,6 +35,10 @@ public class Word {
 
     public INDArray getPca() {
         return pca;
+    }
+
+    public double getPca(int coord) {
+        return this.getPca().getDouble(1, coord);
     }
 
     @Override
@@ -74,5 +76,15 @@ public class Word {
         } else if (!pca.equals(other.pca))
             return false;
         return true;
+    }
+
+    @Override
+    public double[] getProjectionToPlot() {
+        return new double[] { this.getPca(0), this.getPca(1) };
+    }
+
+    @Override
+    public String getToken() {
+        return this.getWord();
     }
 }

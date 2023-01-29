@@ -1,5 +1,6 @@
-package com.biasexplorer4j.WordExploration;
+package com.biasexplorer4j.WordExploration.Vocabulary;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,8 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
+import com.biasexplorer4j.WordExploration.WordToPlot;
+import com.biasexplorer4j.WordExploration.BiasExploration.ProjectedWord;
 
 public class Vocabulary implements Iterable<Word>{
 
@@ -31,6 +34,12 @@ public class Vocabulary implements Iterable<Word>{
     }
 
     public Vocabulary(Map<String, double[]> embeddingsMap) {
+        if (Objects.isNull(embeddingsMap)) {
+            throw new IllegalArgumentException("Embeddings map can not be null");
+        }else if (embeddingsMap.size() == 0) {
+            throw new IllegalArgumentException("Embeddings map has no element");
+        }
+
         for (double[] d : embeddingsMap.values()){
             this.embeddingDimension = d.length;
             break;
@@ -50,10 +59,51 @@ public class Vocabulary implements Iterable<Word>{
         }
     }
 
+    public WordList<Word> getWordList(String title, String word, String... words) {
+        Word token_1 = this.get(word);
+        List<Word> tokens = this.get(Arrays.asList(words));
+
+        if (Objects.nonNull(token_1)){
+            tokens.add(0, token_1);  
+        } 
+        return new WordList<Word>(tokens, title);
+    }
+
+    public WordList<ProjectedWord> getWordList(String title, ProjectedWord... words) {
+        if (Objects.isNull(words)) {
+            throw new IllegalArgumentException("Projected words list can not be null");
+        }
+
+        List<ProjectedWord> wordsInVocab = Arrays.stream(words)
+                                                 .filter(w -> this.contains(w.getWord()))
+                                                 .collect(Collectors.toList());
+        return new WordList<ProjectedWord>(wordsInVocab, title);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends WordToPlot> boolean add(WordList<T> wordList, List<String> words) {
+        List<T> wordsInVocab = (List<T>) this.get(words);
+        return wordList.add(wordsInVocab);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends WordToPlot> boolean add(WordList<T> wordList, String word) {
+        T wordInVocab = (T) this.get(word);
+        if (Objects.isNull(wordInVocab)) {
+            return false;
+        }
+        
+        return wordList.add(wordInVocab);
+    }
+
     public List<String> filterInVocab(List<String> tokens) {
         return tokens.stream()
-                     .filter(t -> vocabulary.containsKey(t))
+                     .filter(t -> this.contains(t))
                      .collect(Collectors.toList());
+    }
+
+    public boolean contains(String token) {
+        return vocabulary.containsKey(token);
     }
 
     public Word get(String token) {

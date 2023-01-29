@@ -16,7 +16,7 @@ public class PseudoLikelihoodTest {
         List<Double> scores = null;
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> new PseudoLikelihood(scores),
-                                                            "Expectedt IllegalArgumentException but not thrown");
+                                                            "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Scores list can not be null"));  
     }

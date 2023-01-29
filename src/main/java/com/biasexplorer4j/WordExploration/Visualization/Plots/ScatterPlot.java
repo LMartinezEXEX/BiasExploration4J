@@ -18,14 +18,17 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import com.biasexplorer4j.WordExploration.WordToPlot;
+import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
+
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.util.List;
 import java.util.Objects;
 
-public class ScatterPlot extends JFrame {
+public class ScatterPlot<T extends WordToPlot> extends JFrame {
 
-    private String[] words;
-    private double[][] projections;
+    private List<WordList<T>> wordLists;
     private String title;
     private String xAxisLabel;
     private String yAxisLabel;
@@ -34,19 +37,15 @@ public class ScatterPlot extends JFrame {
     private static ChartTheme currentTheme = new StandardChartTheme("JFree");
     private JFreeChart chart;
     
-    protected ScatterPlot(String[] words, double[][] projections, String title, 
-                            double[] xAxisLimits, double[] yAxisLimits, 
+    protected ScatterPlot(List<WordList<T>> wordLists,String title, double[] xAxisLimits, double[] yAxisLimits, 
                             String xAxisLabel, String yAxisLabel, 
-                            boolean labelXYPoints, boolean drawOriginAxis) {                       
-        if (Objects.isNull(words)) {
-            throw new IllegalArgumentException("Words to plot list can not be null");
+                            boolean labelXYPoints, boolean drawOriginAxis) {
+        if (Objects.isNull(wordLists)) {
+            throw new IllegalArgumentException("List of WordLists to plot can not be null");
+        } else if (wordLists.stream().anyMatch(e -> Objects.isNull(e))) {
+            throw new IllegalArgumentException("WordList can not be null");
         }
-        if (Objects.isNull(projections)) {
-            throw new IllegalArgumentException("Words projection list can not be null");
-        }
-
-        this.words = words.clone();
-        this.projections = projections.clone();
+        this.wordLists = wordLists;
         this.xAxisLimits = xAxisLimits;
         this.yAxisLimits = yAxisLimits;
         this.title = title;
@@ -81,27 +80,29 @@ public class ScatterPlot extends JFrame {
     }
 
     private XYSeriesCollection createDataset() {
-        if (projections.length != 2) {
-            throw new IllegalArgumentException("Projections list must contain two elements," + 
-                                                "one array for X poryections and another for Y projections");
-        }  else if (words.length != projections[0].length || projections[0].length != projections[1].length) {
-            throw new IllegalArgumentException("Words to plot list size (" + 
-                                                words.length + 
-                                                ") and X projections list size (" +
-                                                projections[0].length +
-                                                ") and Y projection list size (" +
-                                                projections[1].length +
-                                                ") must be equal");
-        }
-        
         XYSeriesCollection dataset = new XYSeriesCollection();
 
-        XYSeries series = new XYSeries("");
-        for (int i = 0; i < words.length; ++i) {
-            series.add(projections[0][i], projections[1][i]);
+        for (WordList<T> wl : wordLists) {
+            XYSeries series = new XYSeries(wl.getTitle());
+            List<T> words = wl.getWords();
+            for (int i = 0; i < words.size(); ++i) {
+                double[] projections = words.get(i).getProjectionToPlot();
+                String word = words.get(i).getToken();
+                if (Objects.isNull(projections)) {
+                    throw new IllegalArgumentException("Projection for word: { " + word + " } is null");
+                }
+                if (projections.length < 2) {
+                    throw new IllegalArgumentException("For scatter plot all words must have at least 2 " +
+                                                            "projection values. Word { " + 
+                                                            word + 
+                                                            " } has only: " + 
+                                                            projections.length);
+                }
+
+                series.add(projections[0], projections[1]);
+            }
+            dataset.addSeries(series);
         }
-        
-        dataset.addSeries(series);
 
         return dataset;
     }
@@ -126,10 +127,15 @@ public class ScatterPlot extends JFrame {
     }
 
     private void putLabelsToXYPoints(XYPlot plot) {
-        for (int i = 0; i < words.length; ++i) {
-            XYTextAnnotation label = new XYTextAnnotation(words[i], projections[0][i], projections[1][i] + 0.02);
-            plot.addAnnotation(label);
-        }
+        for (WordList<T> wl : wordLists) {
+            List<T> words = wl.getWords();
+            for (int i = 0; i < words.size(); ++i) {
+                String token = words.get(i).getToken();
+                double[] projections = words.get(i).getProjectionToPlot();
+                XYTextAnnotation label = new XYTextAnnotation(token, projections[0], projections[1] + 0.02);
+                plot.addAnnotation(label);
+            }
+        }   
     }
 
     private void drawXOriginLines(XYPlot plot, XYSeriesCollection dataset) {
