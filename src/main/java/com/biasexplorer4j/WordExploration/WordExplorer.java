@@ -12,7 +12,7 @@ import com.biasexplorer4j.NearestNeighbour.NearestNeighbour;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PLOT_TYPE;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
-import com.biasexplorer4j.WordExploration.Vocabulary.Word;
+import com.biasexplorer4j.WordExploration.Vocabulary.EmbeddedWord;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -44,7 +44,7 @@ public class WordExplorer {
             normalizer.fit(dataSet);
         }
 
-        for (Word w : vocabulary) {
+        for (EmbeddedWord w : vocabulary) {
             w.setPca(w.getEmbedding().mmul(pca_matrix));
             if (normalize) {
                 w.normalizeEmbedding(normalizer);
@@ -61,7 +61,7 @@ public class WordExplorer {
 
     private INDArray getWordsEmbeddingMatrix() {
         List<INDArray> ndArrays = vocabulary.stream()
-                                            .map(Word::getEmbedding)
+                                            .map(EmbeddedWord::getEmbedding)
                                             .collect(Collectors.toList());
 
         int rows = vocabulary.size();
@@ -71,13 +71,13 @@ public class WordExplorer {
         return matrix;
     }
 
-    public Map<WordList<Word>, List<String>> getNeighbours(List<WordList<Word>> wordLists, int quantity) {
+    public Map<WordList, List<String>> getNeighbours(List<WordList> wordLists, int quantity) {
         if (Objects.isNull(wordLists) || wordLists.size() == 0) {
             throw new IllegalArgumentException("Must provide at least one word list to plot");
         }
 
-        Map<WordList<Word>, List<String>> map = new HashMap<>(wordLists.size());
-        for (WordList<Word> wl : wordLists) {
+        Map<WordList, List<String>> map = new HashMap<>(wordLists.size());
+        for (WordList wl : wordLists) {
             Map<String, List<String>> outputMap = this.getNeighboursFromList(wl.getWordList(), quantity);
             List<String> neighbour_tokens = outputMap.values().stream()
                                                               .flatMap(List::stream)
@@ -97,7 +97,7 @@ public class WordExplorer {
             this.nearestNeighbour = new NearestNeighbour(this.getNeighbourMapping());
         
         List<String> wordsInVocab = vocabulary.get(words).stream()
-                                                         .map(Word::getWord)
+                                                         .map(EmbeddedWord::getWord)
                                                          .collect(Collectors.toList());
 
         return this.nearestNeighbour.getKNearestNeighbour(wordsInVocab, quantity);
@@ -105,10 +105,10 @@ public class WordExplorer {
 
     private Map<String, INDArray> getNeighbourMapping() {
         return vocabulary.stream()
-                         .collect(Collectors.toMap(Word::getWord, Word::getEmbedding));
+                         .collect(Collectors.toMap(EmbeddedWord::getWord, EmbeddedWord::getEmbedding));
     }
 
-    public void plot(List<WordList<Word>> wordLists) {
+    public void plot(List<WordList> wordLists) {
         if (Objects.isNull(wordLists) || wordLists.size() == 0) {
             throw new IllegalArgumentException("Must provide at least one non-null word list to plot");
         }
@@ -126,13 +126,13 @@ public class WordExplorer {
         PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments, wordLists);
     }
 
-    public void plot(List<WordList<Word>> wordLists, int quantity) {
+    public void plot(List<WordList> wordLists, int quantity) {
         if (Objects.isNull(wordLists) || wordLists.size() == 0) {
             throw new IllegalArgumentException("Must provide at least one word list to plot");
         }
 
-        Map<WordList<Word>, List<String>> neighboursMap = this.getNeighbours(wordLists, quantity);
-        for (WordList<Word> wl : wordLists) {
+        Map<WordList, List<String>> neighboursMap = this.getNeighbours(wordLists, quantity);
+        for (WordList wl : wordLists) {
             List<String> neighbouList = neighboursMap.get(wl);
             vocabulary.add(wl, neighbouList);
         }

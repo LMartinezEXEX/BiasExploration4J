@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import javax.swing.JFrame;
 
-import com.biasexplorer4j.WordExploration.WordToPlot;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class PlotManager {
@@ -25,7 +24,7 @@ public class PlotManager {
         return instance;
     }
 
-    public <T extends WordToPlot> boolean plot(PLOT_TYPE type, Map<String, ?> arguments, List<WordList<T>> wordLists) {
+    public boolean plot(PLOT_TYPE type, Map<String, ?> arguments, List<WordList> wordLists) {
         switch (type) {
             case BAR:
                 JFrame barFrame = barPlot(arguments, wordLists);
@@ -40,7 +39,7 @@ public class PlotManager {
         }
     }
 
-    private <T extends WordToPlot> JFrame barPlot(Map<String, ?> arguments, List<WordList<T>> wordLists) {
+    private JFrame barPlot(Map<String, ?> arguments, List<WordList> wordLists) {
         if (Objects.isNull(wordLists) || wordLists.size() == 0) {
             throw new IllegalArgumentException("Must provide one word list to plot");
         }
@@ -49,12 +48,12 @@ public class PlotManager {
         String xAxisLabel    = getOrDefault(arguments, "xAxisLabel", "", String.class);
         String yAxisLabel    = getOrDefault(arguments, "yAxisLabel", "", String.class);
 
-        BarPlot<T> plot = new BarPlot<T>(wordLists.get(0), title, xAxisLabel, yAxisLabel);
+        BarPlot plot = new BarPlot(wordLists.get(0), title, xAxisLabel, yAxisLabel);
         plot.setVisible(true);
         return plot;
     }
 
-    private <T extends WordToPlot> JFrame scatterPlot(Map<String, ?> arguments, List<WordList<T>> wordLists) {
+    private JFrame scatterPlot(Map<String, ?> arguments, List<WordList> wordLists) {
         if (Objects.isNull(wordLists) || wordLists.size() == 0) {
             throw new IllegalArgumentException("Must provide at least one word list to plot");
         }
@@ -67,7 +66,7 @@ public class PlotManager {
         boolean labelXYPoints  = getOrDefault(arguments, "labelPoints", false, Boolean.class);
         boolean drawOriginAxis = getOrDefault(arguments, "drawOriginAxis", false, Boolean.class);
 
-        ScatterPlot<T> plot = new ScatterPlot<T>(wordLists, title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, drawOriginAxis);
+        ScatterPlot plot = new ScatterPlot(wordLists, title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, drawOriginAxis);
         plot.setVisible(true);
         return plot;
     }

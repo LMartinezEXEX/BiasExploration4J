@@ -18,7 +18,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import com.biasexplorer4j.WordExploration.WordToPlot;
+import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 import java.awt.Color;
@@ -26,9 +26,9 @@ import java.awt.BasicStroke;
 import java.util.List;
 import java.util.Objects;
 
-public class ScatterPlot<T extends WordToPlot> extends JFrame {
+public class ScatterPlot extends JFrame {
 
-    private List<WordList<T>> wordLists;
+    private List<WordList> wordLists;
     private String title;
     private String xAxisLabel;
     private String yAxisLabel;
@@ -37,7 +37,7 @@ public class ScatterPlot<T extends WordToPlot> extends JFrame {
     private static ChartTheme currentTheme = new StandardChartTheme("JFree");
     private JFreeChart chart;
     
-    protected ScatterPlot(List<WordList<T>> wordLists,String title, double[] xAxisLimits, double[] yAxisLimits, 
+    protected ScatterPlot(List<WordList> wordLists,String title, double[] xAxisLimits, double[] yAxisLimits, 
                             String xAxisLabel, String yAxisLabel, 
                             boolean labelXYPoints, boolean drawOriginAxis) {
         if (Objects.isNull(wordLists)) {
@@ -82,12 +82,13 @@ public class ScatterPlot<T extends WordToPlot> extends JFrame {
     private XYSeriesCollection createDataset() {
         XYSeriesCollection dataset = new XYSeriesCollection();
 
-        for (WordList<T> wl : wordLists) {
+        for (WordList wl : wordLists) {
             XYSeries series = new XYSeries(wl.getTitle());
-            List<T> words = wl.getWords();
+
+            List<Word> words = wl.getWords();
             for (int i = 0; i < words.size(); ++i) {
-                double[] projections = words.get(i).getProjectionToPlot();
-                String word = words.get(i).getToken();
+                double[] projections = words.get(i).getProjections();
+                String word = words.get(i).getWord();
                 if (Objects.isNull(projections)) {
                     throw new IllegalArgumentException("Projection for word: { " + word + " } is null");
                 }
@@ -127,11 +128,11 @@ public class ScatterPlot<T extends WordToPlot> extends JFrame {
     }
 
     private void putLabelsToXYPoints(XYPlot plot) {
-        for (WordList<T> wl : wordLists) {
-            List<T> words = wl.getWords();
+        for (WordList wl : wordLists) {
+            List<Word> words = wl.getWords();
             for (int i = 0; i < words.size(); ++i) {
-                String token = words.get(i).getToken();
-                double[] projections = words.get(i).getProjectionToPlot();
+                String token = words.get(i).getWord();
+                double[] projections = words.get(i).getProjections();
                 XYTextAnnotation label = new XYTextAnnotation(token, projections[0], projections[1] + 0.02);
                 plot.addAnnotation(label);
             }

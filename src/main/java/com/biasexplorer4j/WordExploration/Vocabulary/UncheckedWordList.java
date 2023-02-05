@@ -4,51 +4,43 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import com.biasexplorer4j.WordExploration.Word;
-
-public class WordList implements Iterable<Word> {
+public class UncheckedWordList implements Iterable<String>{
 
     private String title;
-    private List<Word> wordList;
+    private List<String> wordList;
 
-    @SuppressWarnings("unchecked")
-    protected WordList(List<? extends Word> words, String title) {
-        if (Objects.isNull(words) || words.size() == 0) {
+    public UncheckedWordList(String title, List<String> wordList) {
+        if (Objects.isNull(wordList) || wordList.size() == 0) {
             throw new IllegalArgumentException("Word list must contain at least one word");
         } else if (Objects.isNull(title)) {
             throw new IllegalArgumentException("Word list's title can not be null");
         }
 
         this.title = title;
-        this.wordList = (List<Word>) words;
-    }
+        this.wordList = wordList;
+    } 
 
-    protected boolean add(List<? extends Word> words) {
-        return wordList.addAll(words);
-    }
-
-    protected <T extends Word> boolean add(T word) {
+    public boolean add(String word) {
+        if (Objects.isNull(word)) {
+            return false;
+        }
         return wordList.add(word);
     }
 
-    public List<Word> getWords() {
-        return new ArrayList<>(wordList);
+    public boolean add(List<String> words) {
+        if (Objects.isNull(words)){
+            return false;
+        }
+        return wordList.addAll(words);
     }
 
     public List<String> getWordList() {
-        return wordList.stream()
-                       .map(Word::getWord)
-                       .collect(Collectors.toList());
+        return new ArrayList<>(wordList);
     }
 
     public String getTitle() {
         return title;
-    }
-
-    public int size() {
-        return wordList.size();
     }
 
     @Override
@@ -68,7 +60,7 @@ public class WordList implements Iterable<Word> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        WordList other = (WordList) obj;
+        UncheckedWordList other = (UncheckedWordList) obj;
         if (title == null) {
             if (other.title != null)
                 return false;
@@ -83,7 +75,8 @@ public class WordList implements Iterable<Word> {
     }
 
     @Override
-    public Iterator<Word> iterator() {
-        return this.wordList.iterator();
+    public Iterator<String> iterator() {
+        return wordList.iterator();
     }
+    
 }

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
-import com.biasexplorer4j.WordExploration.BiasExploration.ProjectedWord;
+import com.biasexplorer4j.WordExploration.Word;
 
 public class VocabularyTest {
 
@@ -143,7 +143,7 @@ public class VocabularyTest {
 
         @Test
         public void getSingleWordInVocabulary() {
-            Word word = vocabulary.get("hombre");
+            EmbeddedWord word = vocabulary.get("hombre");
 
             assertNotEquals(null, word);
             assertTrue(word.getWord().equals("hombre"));
@@ -151,14 +151,14 @@ public class VocabularyTest {
 
         @Test
         public void getSingleWordOOV() {
-            Word word = vocabulary.get("papaya21");
+            EmbeddedWord word = vocabulary.get("papaya21");
 
             assertEquals(null, word);
         }
 
         @Test
         public void getWordsInVocabulary() {
-            List<Word> words = vocabulary.get(Arrays.asList("hombre", "mujer"));
+            List<EmbeddedWord> words = vocabulary.get(Arrays.asList("hombre", "mujer"));
 
             assertNotEquals(null, words);
             assertEquals(2, words.size());
@@ -168,7 +168,7 @@ public class VocabularyTest {
 
         @Test
         public void getWordsWithSomeOOV() {
-            List<Word> words = vocabulary.get(Arrays.asList("hombre", "papaya21"));
+            List<EmbeddedWord> words = vocabulary.get(Arrays.asList("hombre", "papaya21"));
 
             assertNotEquals(null, words);
             assertEquals(1, words.size());
@@ -177,7 +177,7 @@ public class VocabularyTest {
 
         @Test
         public void getWordsWithAllOOV() {
-            List<Word> words = vocabulary.get(Arrays.asList("carcaj2d", "papaya21"));
+            List<EmbeddedWord> words = vocabulary.get(Arrays.asList("carcaj2d", "papaya21"));
 
             assertNotEquals(null, words);
             assertEquals(0, words.size());
@@ -197,7 +197,7 @@ public class VocabularyTest {
 
         @Test
         public void generateWordListFromListOfStringsInVocabulary() {
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "mujer");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "mujer");
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
@@ -207,7 +207,7 @@ public class VocabularyTest {
 
         @Test
         public void generateWordListWithFirstStringNull() {
-            WordList<Word> wordList = vocabulary.getWordList("Test", null, "hombre", "mujer");
+            WordList wordList = vocabulary.getWordList("Test", null, "hombre", "mujer");
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
@@ -217,7 +217,7 @@ public class VocabularyTest {
 
         @Test
         public void generateWordListFromListOfStringsWithSomeOOV() {
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "carcaj2d", "mujer", "papaya21");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "carcaj2d", "mujer", "papaya21");
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
@@ -244,27 +244,12 @@ public class VocabularyTest {
         }
 
         @Test
-        public void generateWordListFromProjectedWordList() {
-            ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", generateRandomEmbedding()),
-                                                          new ProjectedWord("mujer", generateRandomEmbedding())
-                                                        };
+        public void generateWordListFromWordList() {
+            Word[] words = new Word[] { new Word("hombre", generateRandomEmbedding()),
+                                        new Word("mujer", generateRandomEmbedding())
+                                      };
 
-            WordList<ProjectedWord> wordList = vocabulary.getWordList("Test", words);
-
-            assertNotEquals(null, wordList);
-            assertEquals(2, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
-            assertTrue(wordList.getTitle().equals("Test"));                                                      
-        }
-
-        @Test
-        public void generateWordListFromProjectedWordListWithSomeOOVWords() {
-            ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", generateRandomEmbedding()),
-                                                          new ProjectedWord("mujer", generateRandomEmbedding()),
-                                                          new ProjectedWord("papaya21", generateRandomEmbedding())
-                                                        };
-
-            WordList<ProjectedWord> wordList = vocabulary.getWordList("Test", words);
+            WordList wordList = vocabulary.getWordList("Test", words);
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
@@ -273,10 +258,25 @@ public class VocabularyTest {
         }
 
         @Test
-        public void generateWordListFromProjectedWordListWithAllOOVWords() {
-            ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("papaya21", generateRandomEmbedding()),
-                                                          new ProjectedWord("carcaj2d", generateRandomEmbedding())
-                                                        };
+        public void generateWordListFromWordListWithSomeOOVWords() {
+            Word[] words = new Word[] { new Word("hombre", generateRandomEmbedding()),
+                                        new Word("mujer", generateRandomEmbedding()),
+                                        new Word("papaya21", generateRandomEmbedding())
+                                      };
+
+            WordList wordList = vocabulary.getWordList("Test", words);
+
+            assertNotEquals(null, wordList);
+            assertEquals(2, wordList.size());
+            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
+            assertTrue(wordList.getTitle().equals("Test"));                                                      
+        }
+
+        @Test
+        public void generateWordListFromWordListWithAllOOVWords() {
+            Word[] words = new Word[] { new Word("papaya21", generateRandomEmbedding()),
+                                        new Word("carcaj2d", generateRandomEmbedding())
+                                      };
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> vocabulary.getWordList("Test", words),
@@ -286,19 +286,8 @@ public class VocabularyTest {
         }
 
         @Test
-        public void generateWordListFromNullReferencedProjectedWordList() {
-            ProjectedWord[] words = null;
-
-            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> vocabulary.getWordList("Test", words),
-                                                            "Expected IllegalArgumentException but not thrown");
-
-            assertTrue(thrown.getMessage().equals("Projected words list can not be null"));                                                    
-        }
-
-        @Test
-        public void generateWordListFromEmptyProjectedWordList() {
-            ProjectedWord[] words = new ProjectedWord[0];
+        public void generateWordListFromNullReferencedWordList() {
+            Word[] words = null;
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> vocabulary.getWordList("Test", words),
@@ -308,10 +297,21 @@ public class VocabularyTest {
         }
 
         @Test
-        public void generateWordListFromProjectedWordListWithNullReferencedTitle() {
-            ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", generateRandomEmbedding()),
-                                                          new ProjectedWord("mujer", generateRandomEmbedding())
-                                                        };
+        public void generateWordListFromEmptyWordList() {
+            Word[] words = new Word[0];
+
+            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
+                                                            () -> vocabulary.getWordList("Test", words),
+                                                            "Expected IllegalArgumentException but not thrown");
+
+            assertTrue(thrown.getMessage().equals("Word list must contain at least one word"));                                                    
+        }
+
+        @Test
+        public void generateWordListFromWordListWithNullReferencedTitle() {
+            Word[] words = new Word[] { new Word("hombre", generateRandomEmbedding()),
+                                        new Word("mujer", generateRandomEmbedding())
+                                      };
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> vocabulary.getWordList(null, words),
@@ -323,7 +323,7 @@ public class VocabularyTest {
         @Test
         public void addInVocabularyWordToWordList() {
             String inVocabulary = "rey";
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
 
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
@@ -334,7 +334,7 @@ public class VocabularyTest {
         @Test
         public void addOOVWordToWordList() {
             String inVocabulary = "papaya21";
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
 
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
@@ -345,7 +345,7 @@ public class VocabularyTest {
         @Test
         public void addInVocabularyMultipleWordsToWordList() {
             List<String> inVocabulary = Arrays.asList("rey", "viejo");
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
 
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
@@ -356,7 +356,7 @@ public class VocabularyTest {
         @Test
         public void addSomeOOVMultipleWordsToWordList() {
             List<String> inVocabulary = Arrays.asList("papaya21", "rey", "viejo");
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
 
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
@@ -367,7 +367,7 @@ public class VocabularyTest {
         @Test
         public void addAllMultipleWordsToWordList() {
             List<String> inVocabulary = Arrays.asList("papaya21", "carcaj2d");
-            WordList<Word> wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
+            WordList wordList = vocabulary.getWordList("Test", "hombre", "mujer", "reina");
 
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 

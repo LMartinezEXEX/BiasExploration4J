@@ -16,10 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
 import com.biasexplorer4j.WordExploration.WordExplorer;
-import com.biasexplorer4j.WordExploration.BiasExploration.BiasExplorer;
-import com.biasexplorer4j.WordExploration.BiasExploration.ProjectedWord;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
-import com.biasexplorer4j.WordExploration.Vocabulary.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class ScatterPlotTest {
@@ -36,7 +33,7 @@ public class ScatterPlotTest {
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
 
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
 
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
@@ -44,7 +41,7 @@ public class ScatterPlotTest {
         String xAxisLabel = "X label";
         String yAxisLabel = "Y label";
 
-        assertDoesNotThrow(() -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false));
+        assertDoesNotThrow(() -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false));
     }
 
     @Test
@@ -55,9 +52,9 @@ public class ScatterPlotTest {
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
 
-        WordList<Word> wordList_1 = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList_1 = we.getVocabulary().getWordList("Test", "hombre", "mujer");
 
-        WordList<Word> wordList_2 = we.getVocabulary().getWordList("Test 2", "rey", "reina");
+        WordList wordList_2 = we.getVocabulary().getWordList("Test 2", "rey", "reina");
 
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
@@ -65,12 +62,12 @@ public class ScatterPlotTest {
         String xAxisLabel = "X label";
         String yAxisLabel = "Y label";
                                            
-        assertDoesNotThrow(() -> new ScatterPlot<Word>(Arrays.asList(wordList_1, wordList_2), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false));
+        assertDoesNotThrow(() -> new ScatterPlot(Arrays.asList(wordList_1, wordList_2), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false));
     }
     
     @Test
     public void instantiateWithNullReferencedWordList() {
-        List<WordList<Word>> wordLists = null;
+        List<WordList> wordLists = null;
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
         String title = "Test";
@@ -78,7 +75,7 @@ public class ScatterPlotTest {
         String yAxisLabel = "Y label";
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new ScatterPlot<Word>(wordLists, title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
+                                                            () -> new ScatterPlot(wordLists, title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
                                                             "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("List of WordLists to plot can not be null"));
@@ -86,7 +83,7 @@ public class ScatterPlotTest {
 
     @Test
     public void instantiateWithNullReferencedWordListInList() {
-        WordList<Word> wordList = null;
+        WordList wordList = null;
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
         String title = "Test";
@@ -94,34 +91,10 @@ public class ScatterPlotTest {
         String yAxisLabel = "Y label";
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
+                                                            () -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
                                                             "Expected IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("WordList can not be null"));
-    }
-
-    @Test
-    public void instantiateWithNullReferencedProjectionProjectedWordList() {
-        DataLoader data = new VecLoader(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
-        Vocabulary vocabulary = new Vocabulary(data);
-        BiasExplorer be = new BiasExplorer(vocabulary);
-
-        ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", null), 
-                                                      new ProjectedWord("mujer", null)
-                                                    };
-
-        WordList<ProjectedWord> wordList = be.getVocabulary().getWordList("Test", words);
-        double[] xAxisLimits = new double[] {2.0, 4.0};
-        double[] yAxisLimits = new double[] {-2.0, 2.0};
-        String title = "Test";
-        String xAxisLabel = "X label";
-        String yAxisLabel = "Y label";
-
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new ScatterPlot<ProjectedWord>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
-                                                            "Expected IllegalArgumentException but not thrown");
-
-        assertTrue(thrown.getMessage().equals("Projection for word: { hombre } is null"));
     }
 
     @Test
@@ -130,7 +103,7 @@ public class ScatterPlotTest {
         Vocabulary vocabulary = new Vocabulary(data);
         WordExplorer we = new WordExplorer(vocabulary);
 
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
 
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
@@ -139,34 +112,8 @@ public class ScatterPlotTest {
         String yAxisLabel = "Y label";
 
         assertThrows(NullPointerException.class, 
-                        () -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
-                        "Expected IllegalArgumentException but not thrown");
-    }
-
-    @Test
-    public void instantiateWithProjectionListMissing() {
-        DataLoader data = new VecLoader(Paths.get("src/test/java/com/biasexplorer4j/data/testEmbeddings.vec"));
-        Vocabulary vocabulary = new Vocabulary(data);
-        BiasExplorer be = new BiasExplorer(vocabulary);
-
-        ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", new double[] { 0.43, -4.32 }), 
-                                                      new ProjectedWord("mujer", new double[] { 0.33 })
-                                                    };
-
-        WordList<ProjectedWord> wordList = be.getVocabulary().getWordList("Test", words);
-        double[] xAxisLimits = new double[] {2.0, 4.0};
-        double[] yAxisLimits = new double[] {-2.0, 2.0};
-        String title = "Test";
-        String xAxisLabel = "X label";
-        String yAxisLabel = "Y label";
-
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new ScatterPlot<ProjectedWord>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
-                                                            "Expectedt IllegalArgumentException but not thrown");
-
-                                                            System.out.println(thrown.getMessage());
-        assertTrue(thrown.getMessage().equals("For scatter plot all words must have at least 2 " +
-                                                "projection values. Word { mujer } has only: 1"));
+                        () -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
+                        "Expected NullPointerException but not thrown");
     }
 
     @Test
@@ -176,14 +123,14 @@ public class ScatterPlotTest {
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
 
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
         String title = null;
         String xAxisLabel = null;
         String yAxisLabel = null;
 
-        assertDoesNotThrow(() -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false));
+        assertDoesNotThrow(() -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false));
     }
 
     @Test
@@ -193,7 +140,7 @@ public class ScatterPlotTest {
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
 
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
         double[] xAxisLimits = new double[] {2.0, 4.0};
 
         double[] yAxisLimits = new double[] {2.0, -2.0};
@@ -203,7 +150,7 @@ public class ScatterPlotTest {
         String yAxisLabel = "Y label";
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
-                                                            () -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
+                                                            () -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false),
                                                             "Expectedt IllegalArgumentException but not thrown");
 
         assertTrue(thrown.getMessage().equals("Range(double, double): require lower (" +
@@ -219,7 +166,7 @@ public class ScatterPlotTest {
         Vocabulary vocabulary = new Vocabulary(data);
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
 
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
@@ -228,7 +175,7 @@ public class ScatterPlotTest {
         String xAxisLabel = "X label";
         String yAxisLabel = "Y label";
 
-        ScatterPlot<Word> plot = new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false);
+        ScatterPlot plot = new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, false, false);
         ValueAxis xAxis = plot.getChart().getXYPlot().getDomainAxis();
         ValueAxis yAxis = plot.getChart().getXYPlot().getRangeAxis();
 
@@ -244,7 +191,7 @@ public class ScatterPlotTest {
         Vocabulary vocabulary = new Vocabulary(data);
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
         String title = "Test";
@@ -253,7 +200,7 @@ public class ScatterPlotTest {
 
         boolean labelXYPoints = true;
 
-        assertDoesNotThrow(() -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, false));
+        assertDoesNotThrow(() -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, false));
     }
 
     @Test
@@ -262,7 +209,7 @@ public class ScatterPlotTest {
         Vocabulary vocabulary = new Vocabulary(data);
         WordExplorer we = new WordExplorer(vocabulary);
         we.calculateWordsPca(false);
-        WordList<Word> wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
+        WordList wordList = we.getVocabulary().getWordList("Test", "hombre", "mujer");
         double[] xAxisLimits = new double[] {2.0, 4.0};
         double[] yAxisLimits = new double[] {-2.0, 2.0};
         String title = "Test";
@@ -272,6 +219,6 @@ public class ScatterPlotTest {
 
         boolean drawOriginAxis = true;
 
-        assertDoesNotThrow(() -> new ScatterPlot<Word>(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, drawOriginAxis));
+        assertDoesNotThrow(() -> new ScatterPlot(Arrays.asList(wordList), title, xAxisLimits, yAxisLimits, xAxisLabel, yAxisLabel, labelXYPoints, drawOriginAxis));
     }
 }

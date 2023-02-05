@@ -15,10 +15,9 @@ import org.junit.jupiter.api.Test;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
+import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.BiasExploration.BiasExplorer;
-import com.biasexplorer4j.WordExploration.BiasExploration.ProjectedWord;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
-import com.biasexplorer4j.WordExploration.Vocabulary.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class PlotManagerTest {
@@ -39,11 +38,11 @@ public class PlotManagerTest {
         Vocabulary vocabulary = new Vocabulary(data);
         BiasExplorer be = new BiasExplorer(vocabulary);
 
-        ProjectedWord[] words = new ProjectedWord[] { new ProjectedWord("hombre", new double[] {0.45}), 
-                                                      new ProjectedWord("mujer", new double[] {-0.45})
-                                                    };
+        Word[] words = new Word[] { new Word("hombre", new double[] {0.45}), 
+                                    new Word("mujer", new double[] {-0.45})
+                                  };
 
-        WordList<ProjectedWord> wordList = be.getVocabulary().getWordList("Test", words);
+        WordList wordList = be.getVocabulary().getWordList("Test", words);
 
         Map<String, Object> arguments = new HashMap<>(0);
 
@@ -52,7 +51,7 @@ public class PlotManagerTest {
 
     @Test
     public void failBarPlotWhenNullReferencedWordList() {
-        List<WordList<Word>> wordLists = null;
+        List<WordList> wordLists = null;
         Map<String, Object> arguments = new HashMap<>(0);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
@@ -64,7 +63,7 @@ public class PlotManagerTest {
 
     @Test
     public void failBarPlotWhenListOfWordListIsEmpty() {
-        List<WordList<Word>> wordLists = Arrays.asList();
+        List<WordList> wordLists = Arrays.asList();
         Map<String, Object> arguments = new HashMap<>(0);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
@@ -76,7 +75,7 @@ public class PlotManagerTest {
 
     @Test
     public void failScatterPlotWhenNullReferencedWordList() {
-        List<WordList<Word>> wordLists = null;
+        List<WordList> wordLists = null;
 
         Map<String, Object> arguments = new HashMap<>(0);
 
@@ -89,7 +88,7 @@ public class PlotManagerTest {
 
     @Test
     public void failScatterPlotWhenWordListIsEmpty() {
-        List<WordList<Word>> wordLists = Arrays.asList();
+        List<WordList> wordLists = Arrays.asList();
 
         Map<String, Object> arguments = new HashMap<>(0);
 
@@ -106,11 +105,11 @@ public class PlotManagerTest {
         Vocabulary vocabulary = new Vocabulary(data);
         BiasExplorer be = new BiasExplorer(vocabulary);
 
-        ProjectedWord[] scatterWords = new ProjectedWord[] { new ProjectedWord("hombre", new double[] {0.45, 0.86}), 
-                                                             new ProjectedWord("mujer", new double[] {-0.45, 0.12})
-                                                           };
+        Word[] scatterWords = new Word[] { new Word("hombre", new double[] {0.45, 0.86}), 
+                                           new Word("mujer", new double[] {-0.45, 0.12})
+                                         };
 
-        WordList<ProjectedWord> scatterWordList = be.getVocabulary().getWordList("Test", scatterWords);
+        WordList scatterWordList = be.getVocabulary().getWordList("Test", scatterWords);
 
         Map<String, Object> scatterArguments = new HashMap<>(0);
 
@@ -118,11 +117,11 @@ public class PlotManagerTest {
         assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, scatterArguments, Arrays.asList(scatterWordList)));
         assertDoesNotThrow(() -> PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, scatterArguments, Arrays.asList(scatterWordList)));
 
-        ProjectedWord[] barWords = new ProjectedWord[] { new ProjectedWord("hombre", new double[] {0.45}), 
-                                                         new ProjectedWord("mujer", new double[] {-0.45})
-                                                       };
+        Word[] barWords = new Word[] { new Word("hombre", new double[] {0.45}), 
+                                       new Word("mujer", new double[] {-0.45})
+                                     };
 
-        WordList<ProjectedWord> barWordList = be.getVocabulary().getWordList("Test", barWords);
+        WordList barWordList = be.getVocabulary().getWordList("Test", barWords);
 
         Map<String, Object> barArguments = new HashMap<>(0);
 

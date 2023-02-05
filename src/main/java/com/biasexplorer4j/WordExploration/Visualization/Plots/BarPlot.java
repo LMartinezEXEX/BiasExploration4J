@@ -9,21 +9,21 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.biasexplorer4j.WordExploration.WordToPlot;
+import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 import java.awt.Color;
 import java.util.Objects;
 
-public class BarPlot<T extends WordToPlot>  extends JFrame {
+public class BarPlot extends JFrame {
 
-    private WordList<T> wordList;
+    private WordList wordList;
     private String title;
     private String xAxisLabel;
     private String yAxisLabel;
     private JFreeChart chart;
     
-    protected BarPlot(WordList<T> wordList, String title, String xAxisLabel, String yAxisLabel) {
+    protected BarPlot(WordList wordList, String title, String xAxisLabel, String yAxisLabel) {
         if (Objects.isNull(wordList)) {
             throw new IllegalArgumentException("Word list to plot can not be null");
         }
@@ -62,9 +62,9 @@ public class BarPlot<T extends WordToPlot>  extends JFrame {
     private DefaultCategoryDataset createDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        for (T projectedWord : this.wordList) {
-            double[] projections = projectedWord.getProjectionToPlot();
-            String word = projectedWord.getToken();
+        for (Word projectedWord : this.wordList) {
+            double[] projections = projectedWord.getProjections();
+            String word = projectedWord.getWord();
             if (Objects.isNull(projections)) {
                 throw new IllegalArgumentException("Projection for word: { " + word + " } is null");
             } else if (projections.length == 0) {
@@ -73,6 +73,7 @@ public class BarPlot<T extends WordToPlot>  extends JFrame {
                                                         word + 
                                                         " } has: 0");
             }
+
             String colorDefiningKey = (projections[0] < 0.0) ? "Neg" : "Pos";
             dataset.addValue(-projections[0], colorDefiningKey, word);
         }

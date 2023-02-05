@@ -13,12 +13,11 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
-import com.biasexplorer4j.WordExploration.WordToPlot;
-import com.biasexplorer4j.WordExploration.BiasExploration.ProjectedWord;
+import com.biasexplorer4j.WordExploration.Word;
 
-public class Vocabulary implements Iterable<Word>{
+public class Vocabulary implements Iterable<EmbeddedWord>{
 
-    private Map<String, Word> vocabulary;
+    private Map<String, EmbeddedWord> vocabulary;
     private int embeddingDimension;
 
     public Vocabulary(DataLoader data) {
@@ -53,50 +52,54 @@ public class Vocabulary implements Iterable<Word>{
         for (Map.Entry<String, double[]> e : embeddingsMap.entrySet()) {
             String token = e.getKey();
             INDArray embedding = Nd4j.create(e.getValue(), new int[] {1, this.embeddingDimension});
-            Word word = new Word(token, embedding);
+            EmbeddedWord word = new EmbeddedWord(token, embedding);
 
             this.vocabulary.put(token, word);
         }
     }
 
-    public WordList<Word> getWordList(String title, String word, String... words) {
-        Word token_1 = this.get(word);
-        List<Word> tokens = this.get(Arrays.asList(words));
+    public WordList getWordList(String title, String word, String... words) {
+        EmbeddedWord token_1 = this.get(word);
+        List<EmbeddedWord> tokens = this.get(Arrays.asList(words));
 
         if (Objects.nonNull(token_1)){
             tokens.add(0, token_1);  
         } 
-        return new WordList<Word>(tokens, title);
+        return new WordList(tokens, title);
     }
 
-    public WordList<ProjectedWord> getWordList(String title, ProjectedWord... words) {
-        if (Objects.isNull(words)) {
-            throw new IllegalArgumentException("Projected words list can not be null");
+    public WordList getWordList(String title, Word... words) {
+        List<Word> listOfWords = null;
+        if (Objects.nonNull(words)) {
+           listOfWords = filterWordsInVocab(Arrays.asList(words));
         }
-
-        List<ProjectedWord> wordsInVocab = Arrays.stream(words)
-                                                 .filter(w -> this.contains(w.getWord()))
-                                                 .collect(Collectors.toList());
-        return new WordList<ProjectedWord>(wordsInVocab, title);
+        return new WordList(listOfWords, title);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends WordToPlot> boolean add(WordList<T> wordList, List<String> words) {
-        List<T> wordsInVocab = (List<T>) this.get(words);
+    public boolean add(WordList wordList, List<String> words) {
+        List<EmbeddedWord> wordsInVocab = this.get(words);
         return wordList.add(wordsInVocab);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends WordToPlot> boolean add(WordList<T> wordList, String word) {
-        T wordInVocab = (T) this.get(word);
+    public boolean add(WordList wordList, String word) {
+        EmbeddedWord wordInVocab = this.get(word);
         if (Objects.isNull(wordInVocab)) {
             return false;
         }
-        
         return wordList.add(wordInVocab);
     }
 
+    private List<Word> filterWordsInVocab(List<Word> words) {
+        return words.stream()
+                    .filter(t -> this.contains(t.getWord()))
+                    .collect(Collectors.toList());
+    }
+
     public List<String> filterInVocab(List<String> tokens) {
+        if (Objects.isNull(tokens)) {
+            return null;
+        }
+
         return tokens.stream()
                      .filter(t -> this.contains(t))
                      .collect(Collectors.toList());
@@ -106,18 +109,18 @@ public class Vocabulary implements Iterable<Word>{
         return vocabulary.containsKey(token);
     }
 
-    public Word get(String token) {
+    public EmbeddedWord get(String token) {
         return this.vocabulary.get(token);
     }
 
-    public List<Word> get(List<String> tokens) {
+    public List<EmbeddedWord> get(List<String> tokens) {
         List<String> inVocab = filterInVocab(tokens);
         return inVocab.stream()
                       .map(t -> vocabulary.get(t))
                       .collect(Collectors.toList());
     }
 
-    public Stream<Word> stream() {
+    public Stream<EmbeddedWord> stream() {
         return vocabulary.values().stream();
     }
 
@@ -130,7 +133,7 @@ public class Vocabulary implements Iterable<Word>{
     }
 
     @Override
-    public Iterator<Word> iterator() {
+    public Iterator<EmbeddedWord> iterator() {
         return this.vocabulary.values().iterator();
     }
 

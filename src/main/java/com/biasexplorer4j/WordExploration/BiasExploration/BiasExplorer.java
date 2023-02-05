@@ -1,8 +1,7 @@
 package com.biasexplorer4j.WordExploration.BiasExploration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,11 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
+import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PLOT_TYPE;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
-import com.biasexplorer4j.WordExploration.Vocabulary.Word;
+import com.biasexplorer4j.WordExploration.Vocabulary.EmbeddedWord;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class BiasExplorer {
@@ -31,21 +31,26 @@ public class BiasExplorer {
         this.vocabulary = vocabulary;
     }
 
-    public double[] plot2SpaceBias(List<String> words, WordList<Word> kernel_1, WordList<Word> kernel_2) {
+    public double[] plot2SpaceBias(List<String> words, WordList kernel_1, WordList kernel_2) {
         if (Objects.isNull(words) || Objects.isNull(kernel_1) || Objects.isNull(kernel_2)) {
             throw new IllegalArgumentException("No list of words can be null");
         }
 
-        List<Word> wordsInVocab = vocabulary.get(words);
+        List<EmbeddedWord> wordsInVocab = vocabulary.get(words);
         double[] projections = calculateBias(wordsInVocab, kernel_1, kernel_2);
-
-        List<ProjectedWord> projectedWords = new ArrayList<>(wordsInVocab.size());
+        
+        Word[] wordsForList = new Word[wordsInVocab.size()];
         for (int i = 0; i < wordsInVocab.size(); ++i) {
-            projectedWords.add(new ProjectedWord(wordsInVocab.get(i).getWord(), new double[] { projections[i] }));
+            wordsForList[i] = new Word(wordsInVocab.get(i).getWord(), new double[] { projections[i] });
         }
-        Collections.sort(projectedWords);
 
-        WordList<ProjectedWord> wordList = vocabulary.getWordList("Words of interest", projectedWords.toArray(new ProjectedWord[0]));
+        Arrays.sort(wordsForList, new Comparator<Word>() {
+            public int compare(Word w1, Word w2) {
+                return Double.compare(w1.getProjections()[0], w2.getProjections()[0]);
+            }
+        });
+
+        WordList wordList = vocabulary.getWordList("Words of interest", wordsForList);
         plot(wordList, 
             kernel_1,
             kernel_2
@@ -54,24 +59,24 @@ public class BiasExplorer {
         return projections;
     }
 
-    public double[][] plot4SpaceBias(List<String> words, WordList<Word> kernel_1, WordList<Word> kernel_2, WordList<Word> kernel_3, WordList<Word> kernel_4) {
+    public double[][] plot4SpaceBias(List<String> words, WordList kernel_1, WordList kernel_2, WordList kernel_3, WordList kernel_4) {
         if (Objects.isNull(words) || Objects.isNull(kernel_1) || Objects.isNull(kernel_2) ||
             Objects.isNull(kernel_3) || Objects.isNull(kernel_4)) {
             throw new IllegalArgumentException("No list of words can be null");
         }
 
-        List<Word> wordsInVocab = vocabulary.get(words);
+        List<EmbeddedWord> wordsInVocab = vocabulary.get(words);
         double[] projections_x = calculateBias(wordsInVocab, kernel_1, kernel_2);
         double[] projections_y = calculateBias(wordsInVocab, kernel_3, kernel_4);
 
-        List<ProjectedWord> projectedWords = new ArrayList<>(wordsInVocab.size());
+        Word[] wordsForList = new Word[wordsInVocab.size()];
         for (int i = 0; i < wordsInVocab.size(); ++i) {
             String word = wordsInVocab.get(i).getWord();
             double[] projection = new double[] { projections_x[i], projections_y[i]};
-            projectedWords.add(new ProjectedWord(word, projection));
+            wordsForList[i] = new Word(word, projection);
         }
 
-        WordList<ProjectedWord> wordList = vocabulary.getWordList("Words of interest", projectedWords.toArray(new ProjectedWord[0]));
+        WordList wordList = vocabulary.getWordList("Words of interest", wordsForList);
         plot(wordList,
             kernel_1, 
             kernel_2, 
@@ -82,7 +87,7 @@ public class BiasExplorer {
         return new double[][] { projections_x, projections_y };
     }
 
-    private double[] calculateBias(List<Word> words, WordList<Word> kernel_1, WordList<Word> kernel_2) {
+    private double[] calculateBias(List<EmbeddedWord> words, WordList kernel_1, WordList kernel_2) {
         if (kernel_1.getWords().equals(kernel_2.getWords())) {
             throw new IllegalArgumentException("Kernels can not be defined by the same words");
         }
@@ -103,13 +108,14 @@ public class BiasExplorer {
     private INDArray getNormedSumEmbeddOf(List<Word> list) {
         INDArray group_1 = Nd4j.zeros(1, vocabulary.getEmbeddingDimension());
         for (Word word : list) {
-            group_1.addi(word.getEmbedding());
+            EmbeddedWord embeddedWord = vocabulary.get(word.getWord());
+            group_1.addi(embeddedWord.getEmbedding());
         }
 
         return Transforms.unitVec(group_1);
     }
 
-    private double[] getProjections(List<Word> words, INDArray direction) {
+    private double[] getProjections(List<EmbeddedWord> words, INDArray direction) {
         double[] projections = new double[words.size()];
         for (int i = 0; i < projections.length; ++i) {
             projections[i] = Transforms.cosineSim(words.get(i).getEmbedding(), direction);
@@ -118,7 +124,7 @@ public class BiasExplorer {
         return projections;
     }
 
-    private void plot(WordList<ProjectedWord> projectedWords, WordList<Word> kernelLeft, WordList<Word> kernelRight) {
+    private void plot(WordList projectedWords, WordList kernelLeft, WordList kernelRight) {
         String title = "2 Spaces word projection";
         String xAxisLabel = "";
         String yAxisLabel = "← " + String.join(", ", kernelLeft.getWordList()) + "      " + String.join(", ", kernelRight.getWordList()) + " →";
@@ -131,7 +137,7 @@ public class BiasExplorer {
         PlotManager.getInstance().plot(PLOT_TYPE.BAR, arguments, Arrays.asList(projectedWords));
     }
 
-    private void plot(WordList<ProjectedWord> projectedWords, WordList<Word> kernelLeft, WordList<Word> kernelRight, WordList<Word> kernelUp, WordList<Word> kernelDown) {
+    private void plot(WordList projectedWords, WordList kernelLeft, WordList kernelRight, WordList kernelUp, WordList kernelDown) {
         double[] xAxisLimits = new double[] {-1, 1};
         double[] yAxisLimits = new double[] {-1, 1};
         String title = "4 Spaces word projection";

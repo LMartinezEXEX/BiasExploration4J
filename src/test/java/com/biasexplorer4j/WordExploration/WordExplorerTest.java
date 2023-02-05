@@ -21,7 +21,7 @@ import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
-import com.biasexplorer4j.WordExploration.Vocabulary.Word;
+import com.biasexplorer4j.WordExploration.Vocabulary.EmbeddedWord;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class WordExplorerTest {
@@ -87,7 +87,7 @@ public class WordExplorerTest {
         @Test
         public void correctPCACalculationWithoutNormalization() {
             this.wordExplorer.calculateWordsPca(false);
-            Word word = wordExplorer.getVocabulary().get("mujer");
+            EmbeddedWord word = wordExplorer.getVocabulary().get("mujer");
             
             assertEquals(-0.01724, word.getPca(0), 0.0001);
             assertEquals(0.63126, word.getPca(1), 0.0001);
@@ -95,7 +95,7 @@ public class WordExplorerTest {
 
         @Test
         public void getNeighboursWithNullReferencedWordList() {
-            List<WordList<Word>> lists = null;
+            List<WordList> lists = null;
             int k = 3;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.wordExplorer.getNeighbours(lists, k),
@@ -106,10 +106,10 @@ public class WordExplorerTest {
 
         @Test
         public void getNeighboursOfSingleWordList() {
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int k = 3;
-            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+            Map<WordList, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
             assertEquals(1, n_map.size());
             assertEquals(3, n_map.get(lists.get(0)).size());
@@ -118,10 +118,10 @@ public class WordExplorerTest {
         
         @Test
         public void getNeighboursOfSingleWordListWithOOVWords() {
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre", "papaya21"));
             int k = 1;
-            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+            Map<WordList, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
             assertEquals(1, n_map.size());
             assertEquals(1, n_map.get(lists.get(0)).size());
@@ -130,13 +130,13 @@ public class WordExplorerTest {
 
         @Test
         public void getNeighboursOfMultipleWordList() {
-            WordList<Word> list_1 = this.wordExplorer.getVocabulary().getWordList("masculino", "hombre");
-            WordList<Word> list_2 = this.wordExplorer.getVocabulary().getWordList("femenino", "mujer");
-            WordList<Word> list_3 = this.wordExplorer.getVocabulary().getWordList("adulto", "viejo", "mayor", "maduro");
+            WordList list_1 = this.wordExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList list_2 = this.wordExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList list_3 = this.wordExplorer.getVocabulary().getWordList("adulto", "viejo", "mayor", "maduro");
             
-            List<WordList<Word>> lists = Arrays.asList(list_1, list_2, list_3);
+            List<WordList> lists = Arrays.asList(list_1, list_2, list_3);
             int k = 3;
-            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+            Map<WordList, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
             assertEquals(3, n_map.size());
             assertEquals(3, n_map.get(lists.get(0)).size());
@@ -151,10 +151,10 @@ public class WordExplorerTest {
         
         @Test
         public void getZeroNeighboursFromList() {
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int k = 0;
-            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+            Map<WordList, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
             assertEquals(1, n_map.size());
             assertEquals(0, n_map.get(lists.get(0)).size());
@@ -162,7 +162,7 @@ public class WordExplorerTest {
 
         @Test
         public void getNeighboursWithNegativeQuantity() {
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int k = -2;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
@@ -174,10 +174,10 @@ public class WordExplorerTest {
 
         @Test
         public void whenSerachingForOneNeighbourIsNotTheSameWord() {
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int k = 1;
-            Map<WordList<Word>, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
+            Map<WordList, List<String>> n_map = this.wordExplorer.getNeighbours(lists, k);
 
             assertEquals(1, n_map.size());
             assertEquals(1, n_map.get(lists.get(0)).size());
@@ -186,7 +186,7 @@ public class WordExplorerTest {
 
         @Test
         public void plotNullReferencedWordList() {
-            List<WordList<Word>> lists = null;
+            List<WordList> lists = null;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.wordExplorer.plot(lists),
                                                             "Expected IllegalArgumentException but not thrown");
@@ -196,7 +196,7 @@ public class WordExplorerTest {
 
         @Test
         public void plotWithNegativeNumberOfNeighbours() {
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int numberOfNeighbours = -2;
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
@@ -210,7 +210,7 @@ public class WordExplorerTest {
         public void plotWithoutNeighbours() {
             this.wordExplorer.calculateWordsPca(false);
 
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
 
             assertDoesNotThrow(() -> this.wordExplorer.plot(lists));
@@ -220,7 +220,7 @@ public class WordExplorerTest {
         public void plotWithWordListWithNeighboursAndVerifyChangeInWordList() {
             this.wordExplorer.calculateWordsPca(false);
 
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int numberOfNeighbours = 2;
 
@@ -232,7 +232,7 @@ public class WordExplorerTest {
         public void plotWithZeroNeighbours() {
             this.wordExplorer.calculateWordsPca(false);
 
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre"));
             int numberOfNeighbours = 0;
 
@@ -244,7 +244,7 @@ public class WordExplorerTest {
         public void plotWithOOVWords() {
             this.wordExplorer.calculateWordsPca(false);
 
-            List<WordList<Word>> lists = Arrays.asList(this.wordExplorer.getVocabulary()
+            List<WordList> lists = Arrays.asList(this.wordExplorer.getVocabulary()
                                                                         .getWordList("masculino", "hombre", "papaya21"));
             int numberOfNeighbours = 2;
 

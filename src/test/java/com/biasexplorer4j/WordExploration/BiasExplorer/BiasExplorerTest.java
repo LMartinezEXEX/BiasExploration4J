@@ -18,7 +18,6 @@ import com.biasexplorer4j.DataLoader.VecLoader;
 import com.biasexplorer4j.WordExploration.BiasExploration.BiasExplorer;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
-import com.biasexplorer4j.WordExploration.Vocabulary.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class BiasExplorerTest {
@@ -61,8 +60,8 @@ public class BiasExplorerTest {
         @Test
         public void plot2SpacesWithNullLists() {
             List<String> words = null;
-            WordList<Word> kernel_1 = null;
-            WordList<Word> kernel_2 = null;
+            WordList kernel_1 = null;
+            WordList kernel_2 = null;
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.biasExplorer.plot2SpaceBias(words, kernel_1, kernel_2),
@@ -74,8 +73,8 @@ public class BiasExplorerTest {
         @Test
         public void plot2Spaces() {
             List<String> words = Arrays.asList("hombre");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
             double[] projections = this.biasExplorer.plot2SpaceBias(words, kernel_1, kernel_2);
 
             System.out.println(projections[0]);
@@ -86,8 +85,8 @@ public class BiasExplorerTest {
         @Test
         public void plot2SpacesWithOOVWordsInWordsToPlot() {
             List<String> words = Arrays.asList("hombre", "papaya21");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
             double[] projections = this.biasExplorer.plot2SpaceBias(words, kernel_1, kernel_2);
 
             assertEquals(1, projections.length);
@@ -97,8 +96,8 @@ public class BiasExplorerTest {
         @Test
         public void plot2SpacesWithOOVWordsInKernel() {
             List<String> words = Arrays.asList("hombre");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer", "carcaj2d");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer", "carcaj2d");
             double[] projections = this.biasExplorer.plot2SpaceBias(words, kernel_1, kernel_2);
 
             assertEquals(1, projections.length);
@@ -108,8 +107,8 @@ public class BiasExplorerTest {
         @Test
         public void plot2SpacesWithSameKernelDefinition() {
             List<String> words = Arrays.asList("hombre");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.biasExplorer.plot2SpaceBias(words, kernel_1, kernel_2),
@@ -121,10 +120,10 @@ public class BiasExplorerTest {
         @Test
         public void plot4SpacesWithNullLists() {
             List<String> words = null;
-            WordList<Word> kernel_1 = null;
-            WordList<Word> kernel_2 = null;
-            WordList<Word> kernel_3 = null;
-            WordList<Word> kernel_4 = null;
+            WordList kernel_1 = null;
+            WordList kernel_2 = null;
+            WordList kernel_3 = null;
+            WordList kernel_4 = null;
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.biasExplorer.plot4SpaceBias(words, kernel_1, kernel_2, kernel_3, kernel_4),
@@ -136,10 +135,10 @@ public class BiasExplorerTest {
         @Test
         public void plot4Spaces() {
             List<String> words = Arrays.asList("hombre");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
-            WordList<Word> kernel_3 = this.biasExplorer.getVocabulary().getWordList("rey", "rey");
-            WordList<Word> kernel_4 = this.biasExplorer.getVocabulary().getWordList("reina", "reina");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList kernel_3 = this.biasExplorer.getVocabulary().getWordList("rey", "rey");
+            WordList kernel_4 = this.biasExplorer.getVocabulary().getWordList("reina", "reina");
             double[][] projections = this.biasExplorer.plot4SpaceBias(words, kernel_1, kernel_2, kernel_3, kernel_4);
 
             assertEquals(2, projections.length);
@@ -152,10 +151,10 @@ public class BiasExplorerTest {
         @Test
         public void plot4SpacesWithOOVWordsInWordsToPlot() {
             List<String> words = Arrays.asList("hombre", "papaya21");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
-            WordList<Word> kernel_3 = this.biasExplorer.getVocabulary().getWordList("rey", "rey");
-            WordList<Word> kernel_4 = this.biasExplorer.getVocabulary().getWordList("reina", "reina");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList kernel_3 = this.biasExplorer.getVocabulary().getWordList("rey", "rey");
+            WordList kernel_4 = this.biasExplorer.getVocabulary().getWordList("reina", "reina");
             double[][] projections = this.biasExplorer.plot4SpaceBias(words, kernel_1, kernel_2, kernel_3, kernel_4);
 
             assertEquals(2, projections.length);
@@ -168,10 +167,10 @@ public class BiasExplorerTest {
         @Test
         public void plot4SpacesWithOOVWordsInKernel() {
             List<String> words = Arrays.asList("hombre");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer", "papaya21");
-            WordList<Word> kernel_3 = this.biasExplorer.getVocabulary().getWordList("rey", "rey", "papaya21");
-            WordList<Word> kernel_4 = this.biasExplorer.getVocabulary().getWordList("reina", "reina", "papaya21");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre", "papaya21");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer", "papaya21");
+            WordList kernel_3 = this.biasExplorer.getVocabulary().getWordList("rey", "rey", "papaya21");
+            WordList kernel_4 = this.biasExplorer.getVocabulary().getWordList("reina", "reina", "papaya21");
             double[][] projections = this.biasExplorer.plot4SpaceBias(words, kernel_1, kernel_2, kernel_3, kernel_4);
 
             assertEquals(2, projections.length);
@@ -184,10 +183,10 @@ public class BiasExplorerTest {
         @Test
         public void plot4SpacesWithSameKernelDefinition() {
             List<String> words = Arrays.asList("hombre");
-            WordList<Word> kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
-            WordList<Word> kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
-            WordList<Word> kernel_3 = this.biasExplorer.getVocabulary().getWordList("viejo_1", "viejo");
-            WordList<Word> kernel_4 = this.biasExplorer.getVocabulary().getWordList("viejo_2", "viejo");
+            WordList kernel_1 = this.biasExplorer.getVocabulary().getWordList("masculino", "hombre");
+            WordList kernel_2 = this.biasExplorer.getVocabulary().getWordList("femenino", "mujer");
+            WordList kernel_3 = this.biasExplorer.getVocabulary().getWordList("viejo_1", "viejo");
+            WordList kernel_4 = this.biasExplorer.getVocabulary().getWordList("viejo_2", "viejo");
 
             IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
                                                             () -> this.biasExplorer.plot4SpaceBias(words, kernel_1, kernel_2, kernel_3, kernel_4),
