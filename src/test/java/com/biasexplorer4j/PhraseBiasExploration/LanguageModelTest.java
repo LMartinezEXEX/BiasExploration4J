@@ -231,7 +231,7 @@ public class LanguageModelTest {
                                                             () -> this.lm.rank(processedPrases, validTokens),
                                                             "Expected IllegalArgumentException but not thrown");
 
-            assertTrue(thrown.getMessage().equals("Different amount of processed phrases (4) and valid tokens (3) encounteres"));
+            assertTrue(thrown.getMessage().equals("Different amount of processed phrases (4) and valid tokens (3) encountered"));
         }
 
         @Test

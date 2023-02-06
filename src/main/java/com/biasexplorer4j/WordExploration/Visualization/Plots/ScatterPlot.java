@@ -18,7 +18,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import com.biasexplorer4j.WordExploration.Word;
+import com.biasexplorer4j.WordExploration.Vocabulary.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 import java.awt.Color;

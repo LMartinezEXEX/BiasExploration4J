@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.biasexplorer4j.WordExploration.Vocabulary.UncheckedWordList;
+
 public class MaskFillerRankerTest {
     
     @Test
@@ -170,6 +172,67 @@ public class MaskFillerRankerTest {
             assertEquals(1.22712, map.get("The <BAD> people are bad"), 0.0001);
             assertEquals(1.28813, map.get("The <YOUNG> people are bad"), 0.0001);
             assertEquals(1.66075, map.get("The <POOR> people are bad"), 0.0001);
+        }
+
+        @Test
+        public void compareWithWordList() {
+            String phrase = "The [MASK] people are bad";
+            UncheckedWordList wl = new UncheckedWordList("Test", Arrays.asList("poor", "black", "beautiful"));
+            Map<String, Double> map = this.mfr.compare(phrase, wl);
+
+            assertEquals(3, map.size());
+            assertEquals(1.0, map.get("The <BLACK> people are bad"));
+            assertEquals(1.05145, map.get("The <BEAUTIFUL> people are bad"), 0.0001);
+            assertEquals(1.36688, map.get("The <POOR> people are bad"), 0.0001);
+        }
+
+        @Test
+        public void compareWithNullReferencedWordList() {
+            String phrase = "The [MASK] people are bad";
+            UncheckedWordList wl = null;
+
+            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
+                                                            () -> this.mfr.compare(phrase, wl),
+                                                            "Expected IllegalArgumentException but not thrown");
+
+            assertTrue(thrown.getMessage().equals("WordList can not be null")); 
+        }
+
+        @Test
+        public void compareWordLists() {
+            String phrase = "The [MASK] people are bad";
+            UncheckedWordList first_world = new UncheckedWordList("First world", Arrays.asList("American", "Italian", "Japanese", "Australian"));
+            UncheckedWordList second_world = new UncheckedWordList("Second world", Arrays.asList("Bulgarian", "Russian", "Cuban", "Chinise"));
+            UncheckedWordList third_world = new UncheckedWordList("Third world", Arrays.asList("Mexican", "Argentinian", "Peruan", "Bolivian"));
+            Map<String, Double> map = this.mfr.compareWordLists(phrase, first_world, second_world, third_world);
+
+            assertEquals(3, map.size());
+            assertEquals(1.06483, map.get("First world"), 0.0001);
+            assertEquals(1.14603, map.get("Second world"), 0.0001);
+            assertEquals(1.13702, map.get("Third world"), 0.0001);
+        }
+
+        @Test
+        public void compareWithNullReferencedWordLists() {
+            String phrase = "The [MASK] people are bad";
+
+            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
+                                                            () -> this.mfr.compareWordLists(phrase, (UncheckedWordList[]) null),
+                                                            "Expected IllegalArgumentException but not thrown");
+
+            assertTrue(thrown.getMessage().equals("Word lists array can not be null nor have less than one word list")); 
+        }
+
+        @Test
+        public void compareOnlyOneWordList() {
+            String phrase = "The [MASK] people are bad";
+            UncheckedWordList first_world = new UncheckedWordList("First world", Arrays.asList("American", "Italian", "Japanese", "Australian"));
+
+            IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, 
+                                                            () -> this.mfr.compareWordLists(phrase, first_world),
+                                                            "Expected IllegalArgumentException but not thrown");
+
+            assertTrue(thrown.getMessage().equals("Word lists array can not be null nor have less than one word list")); 
         }
     }
 }

@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
-import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.BiasExploration.BiasExplorer;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
+import com.biasexplorer4j.WordExploration.Vocabulary.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 public class PlotManagerTest {

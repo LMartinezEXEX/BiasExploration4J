@@ -1,11 +1,15 @@
 package com.biasexplorer4j.PhraseBiasExploration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.hadoop.shaded.org.apache.commons.lang3.StringUtils;
+
+import com.biasexplorer4j.WordExploration.Vocabulary.UncheckedWordList;
 
 public class MaskFillerRanker {
     private LanguageModel lm;
@@ -16,10 +20,6 @@ public class MaskFillerRanker {
 
     public MaskFillerRanker(String modelUrl) {
         this.lm = new LanguageModel(modelUrl);
-    }
-
-    public MaskFillerRanker(LanguageModel languageModel) {
-        this.lm = languageModel;
     }
 
     public Map<String, Double> compare(String phrase) {
@@ -61,5 +61,27 @@ public class MaskFillerRanker {
         List<String> processedPhrases = lm.processInput(maskedPhraseForProcessing);
         List<String> validTokens = lm.getValidTokens(maskedPhraseForProcessing);
         return lm.rank(processedPhrases, validTokens);
+    }
+
+    public Map<String, Double> compare(String phrase, UncheckedWordList wordList) {
+        if (Objects.isNull(wordList)) {
+            throw new IllegalArgumentException("WordList can not be null");
+        }
+        return compare(phrase, wordList.getWordList());
+    }
+
+    public Map<String, Double> compareWordLists(String phrase, UncheckedWordList... wordlists) {
+        if (Objects.isNull(wordlists) || wordlists.length <= 1) {
+            throw new IllegalArgumentException("Word lists array can not be null nor have less than one word list");
+        }
+
+        Map<String, Double> results = new HashMap<>(wordlists.length);
+
+        for (UncheckedWordList wl : wordlists) {
+            Map<String, Double> first = compare(phrase, wl.getWordList());
+            Mean mean = new Mean();
+            results.put(wl.getTitle(), mean.evaluate(first.values().stream().mapToDouble(d -> d).toArray()));
+        }
+        return results;
     }
 }

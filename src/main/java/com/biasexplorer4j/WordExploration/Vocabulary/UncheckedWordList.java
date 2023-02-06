@@ -18,7 +18,7 @@ public class UncheckedWordList implements Iterable<String>{
         }
 
         this.title = title;
-        this.wordList = wordList;
+        this.wordList = new ArrayList<>(wordList);
     } 
 
     public boolean add(String word) {
@@ -41,6 +41,10 @@ public class UncheckedWordList implements Iterable<String>{
 
     public String getTitle() {
         return title;
+    }
+
+    public int size() {
+        return wordList.size();
     }
 
     @Override

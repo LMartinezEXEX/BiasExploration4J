@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.biasexplorer4j.WordExploration.Word;
-
 public class WordList implements Iterable<Word> {
 
     private String title;
@@ -22,7 +20,7 @@ public class WordList implements Iterable<Word> {
         }
 
         this.title = title;
-        this.wordList = (List<Word>) words;
+        this.wordList = (List<Word>) new ArrayList<>(words);
     }
 
     protected boolean add(List<? extends Word> words) {

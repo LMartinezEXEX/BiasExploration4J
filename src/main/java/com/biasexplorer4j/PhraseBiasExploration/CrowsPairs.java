@@ -19,10 +19,6 @@ public class CrowsPairs {
         this.lm = new LanguageModel(modelUrl);
     }
 
-    public CrowsPairs(LanguageModel languageModel) {
-        this.lm = languageModel;
-    }
-
     public Map<String, Double> compare(List<String> phrases) {
         if (Objects.isNull(phrases)) {
             throw new IllegalArgumentException("List of phrases can not be null");

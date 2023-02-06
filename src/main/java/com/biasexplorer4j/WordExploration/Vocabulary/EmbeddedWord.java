@@ -3,8 +3,6 @@ package com.biasexplorer4j.WordExploration.Vocabulary;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 
-import com.biasexplorer4j.WordExploration.Word;
-
 public class EmbeddedWord extends Word {
 
     private INDArray embedding;

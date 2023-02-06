@@ -1,4 +1,4 @@
-package com.biasexplorer4j.WordExploration;
+package com.biasexplorer4j.WordExploration.Vocabulary;
 
 import java.util.Objects;
 

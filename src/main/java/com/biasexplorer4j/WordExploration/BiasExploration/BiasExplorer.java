@@ -12,10 +12,10 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
-import com.biasexplorer4j.WordExploration.Word;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PLOT_TYPE;
 import com.biasexplorer4j.WordExploration.Visualization.Plots.PlotManager;
 import com.biasexplorer4j.WordExploration.Vocabulary.Vocabulary;
+import com.biasexplorer4j.WordExploration.Vocabulary.Word;
 import com.biasexplorer4j.WordExploration.Vocabulary.EmbeddedWord;
 import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 

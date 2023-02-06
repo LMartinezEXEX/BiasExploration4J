@@ -3,7 +3,6 @@ package com.biasexplorer4j.PhraseBiasExploration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -25,12 +24,13 @@ public class LanguageModel {
     private ZooModel<String, Classifications> model;
     private HuggingFaceTokenizer tokenizer;
     private Pattern pattern = Pattern.compile("<(.*?)>");
+    private static final String BIAS_EXPLORATION_MASK = "[PAD]";
 
-    public LanguageModel() {
+    protected LanguageModel() {
         this("djl://ai.djl.huggingface.pytorch/bert-base-uncased");
     }
 
-    public LanguageModel(String modelUrl) {
+    protected LanguageModel(String modelUrl) {
         if (Objects.isNull(modelUrl)) {
             throw new IllegalArgumentException("Model URL string can not be null");
         }
@@ -60,7 +60,7 @@ public class LanguageModel {
         } else if (processedPhrases.size() != validTokens.size()) {
             throw new IllegalArgumentException("Different amount of processed phrases (" 
                                                 + processedPhrases.size() + ") and valid tokens (" + 
-                                                validTokens.size() + ") encounteres");
+                                                validTokens.size() + ") encountered");
         }
 
         double rank = 0.0;
@@ -100,7 +100,7 @@ public class LanguageModel {
         return topKWords;
     }
 
-    public List<String> processInput(String phrase) {
+    protected List<String> processInput(String phrase) {
         if (Objects.isNull(phrase)) {
             throw new IllegalArgumentException("Phrase can not be null");
         }
@@ -113,7 +113,7 @@ public class LanguageModel {
         String[] maskedPhraseTokens = maskedPhrase.split(" ");
         for (int i = 0; i < maskedPhraseTokens.length; ++i) {
             String s = maskedPhraseTokens[i];
-            if (s.equals("[PAD]")) {
+            if (s.equals(BIAS_EXPLORATION_MASK)) {
                 continue;
             }
             int numberOfParts = tokenizer.encode(s).getTokens().length - 2;
@@ -141,7 +141,7 @@ public class LanguageModel {
 
     private String maskSurroundedWords(String phrase) {
         Matcher m = pattern.matcher(phrase);
-        return m.replaceAll("[PAD]");
+        return m.replaceAll(BIAS_EXPLORATION_MASK);
     }
 
     private void replaceSurroundedWordsMasked(List<String> phrases, List<String> wordsToReplace) {
@@ -150,7 +150,7 @@ public class LanguageModel {
 
             int wordToReplaceIdx = 0;
             for (int j = 0; j < tokens.length; ++j) {
-                if (tokens[j].equals("[PAD]")) {
+                if (tokens[j].equals(BIAS_EXPLORATION_MASK)) {
                     tokens[j] = wordsToReplace.get(wordToReplaceIdx++);
                 }
             }
@@ -158,7 +158,7 @@ public class LanguageModel {
         }
     }
 
-    public List<String> getValidTokens(String phrase) {
+    protected List<String> getValidTokens(String phrase) {
         if (Objects.isNull(phrase)) {
             throw new IllegalArgumentException("Phrase can not be null");
         }
@@ -170,9 +170,7 @@ public class LanguageModel {
     private List<String> getAndProcessTokens(String phrase) {
         Encoding encoding = tokenizer.encode(phrase);
         List<String> tokens = new ArrayList<>(Arrays.asList(encoding.getTokens()));
-        tokens.removeAll(Collections.singleton("[CLS]"));
-        tokens.removeAll(Collections.singleton("[SEP]"));
-        tokens.removeAll(Collections.singleton("[PAD]"));
+        tokens.removeAll(Arrays.asList("[CLS]", "[SEP]", BIAS_EXPLORATION_MASK));
         return tokens;
     }
 

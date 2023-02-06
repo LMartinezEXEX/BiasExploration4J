@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import com.biasexplorer4j.DataLoader.DataLoader;
 import com.biasexplorer4j.DataLoader.VecLoader;
-import com.biasexplorer4j.WordExploration.Word;
 
 public class VocabularyTest {
 
