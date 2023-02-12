@@ -1,7 +1,6 @@
 package com.biasexplorer4j.WordExploration.BiasExploration;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,16 +43,10 @@ public class BiasExplorer {
             wordsForList[i] = new Word(wordsInVocab.get(i).getWord(), new double[] { projections[i] });
         }
 
-        Arrays.sort(wordsForList, new Comparator<Word>() {
-            public int compare(Word w1, Word w2) {
-                return Double.compare(w1.getProjections()[0], w2.getProjections()[0]);
-            }
-        });
-
         WordList wordList = vocabulary.getWordList("Words of interest", wordsForList);
         plot(wordList, 
-            kernel_1,
-            kernel_2
+            kernel_2,
+            kernel_1
             );
 
         return projections;
