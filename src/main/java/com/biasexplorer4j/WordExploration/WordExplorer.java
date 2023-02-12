@@ -1,9 +1,12 @@
 package com.biasexplorer4j.WordExploration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.nd4j.linalg.factory.Nd4j;
@@ -71,18 +74,18 @@ public class WordExplorer {
         return matrix;
     }
 
-    public Map<WordList, List<String>> getNeighbours(List<WordList> wordLists, int quantity) {
+    public Map<WordList, Set<String>> getNeighbours(List<WordList> wordLists, int quantity) {
         if (Objects.isNull(wordLists) || wordLists.size() == 0) {
             throw new IllegalArgumentException("Must provide at least one word list to plot");
         }
 
-        Map<WordList, List<String>> map = new HashMap<>(wordLists.size());
+        Map<WordList, Set<String>> map = new HashMap<>(wordLists.size());
         for (WordList wl : wordLists) {
             Map<String, List<String>> outputMap = this.getNeighboursFromList(wl.getWordList(), quantity);
             List<String> neighbour_tokens = outputMap.values().stream()
                                                               .flatMap(List::stream)
                                                               .collect(Collectors.toList());
-            map.put(wl, neighbour_tokens);
+            map.put(wl, new HashSet<>(neighbour_tokens));
         }
 
         return map;
@@ -131,10 +134,10 @@ public class WordExplorer {
             throw new IllegalArgumentException("Must provide at least one word list to plot");
         }
 
-        Map<WordList, List<String>> neighboursMap = this.getNeighbours(wordLists, quantity);
+        Map<WordList, Set<String>> neighboursMap = this.getNeighbours(wordLists, quantity);
         for (WordList wl : wordLists) {
-            List<String> neighbouList = neighboursMap.get(wl);
-            vocabulary.add(wl, neighbouList);
+            Set<String> neighbouSet = neighboursMap.get(wl);
+            vocabulary.add(wl, new ArrayList<>(neighbouSet));
         }
 
         this.plot(wordLists);

@@ -1,14 +1,16 @@
 package com.biasexplorer4j.WordExploration.Vocabulary;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class UncheckedWordList implements Iterable<String>{
 
     private String title;
-    private List<String> wordList;
+    private Set<String> wordList;
 
     public UncheckedWordList(String title, List<String> wordList) {
         if (Objects.isNull(wordList) || wordList.size() == 0) {
@@ -18,7 +20,7 @@ public class UncheckedWordList implements Iterable<String>{
         }
 
         this.title = title;
-        this.wordList = new ArrayList<>(wordList);
+        this.wordList = new HashSet<>(wordList);
     } 
 
     public boolean add(String word) {

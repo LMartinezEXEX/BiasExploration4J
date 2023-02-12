@@ -101,7 +101,9 @@ public class BarPlotTest {
                                                             () -> new BarPlot(wordList, title, xAxisLabel, yAxisLabel),
                                                             "Expected IllegalArgumentException but not thrown");
 
-        assertTrue(thrown.getMessage().equals("Projection for word: { hombre } is null"));
+        assertTrue(thrown.getMessage().equals("Projection for word: { hombre } is null") || 
+                   thrown.getMessage().equals("Projection for word: { mujer } is null")
+                  );
     }
 
     @Test

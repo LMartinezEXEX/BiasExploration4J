@@ -200,7 +200,7 @@ public class VocabularyTest {
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer").containsAll(wordList.getWordList()));
             assertTrue(wordList.getTitle().equals("Test"));
         }
 
@@ -210,7 +210,7 @@ public class VocabularyTest {
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer").containsAll(wordList.getWordList()));
             assertTrue(wordList.getTitle().equals("Test"));
         }
 
@@ -220,7 +220,7 @@ public class VocabularyTest {
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer").containsAll(wordList.getWordList()));
             assertTrue(wordList.getTitle().equals("Test"));
         }
 
@@ -252,7 +252,7 @@ public class VocabularyTest {
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer").containsAll(wordList.getWordList()));
             assertTrue(wordList.getTitle().equals("Test"));                                                      
         }
 
@@ -267,7 +267,7 @@ public class VocabularyTest {
 
             assertNotEquals(null, wordList);
             assertEquals(2, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer").containsAll(wordList.getWordList()));
             assertTrue(wordList.getTitle().equals("Test"));                                                      
         }
 
@@ -327,7 +327,7 @@ public class VocabularyTest {
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
             assertEquals(4, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer", "reina", "rey"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer", "reina", "rey").containsAll(wordList.getWordList()));
         }
 
         @Test
@@ -338,7 +338,7 @@ public class VocabularyTest {
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
             assertEquals(3, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer", "reina"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer", "reina").containsAll(wordList.getWordList()));
         }
 
         @Test
@@ -349,7 +349,7 @@ public class VocabularyTest {
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
             assertEquals(5, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer", "reina", "rey", "viejo"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer", "reina", "rey", "viejo").containsAll(wordList.getWordList()));
         }
 
         @Test
@@ -360,7 +360,7 @@ public class VocabularyTest {
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
             assertEquals(5, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer", "reina", "rey", "viejo"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer", "reina", "rey", "viejo").containsAll(wordList.getWordList()));
         }
 
         @Test
@@ -371,7 +371,7 @@ public class VocabularyTest {
             assertDoesNotThrow(() -> vocabulary.add(wordList, inVocabulary));
 
             assertEquals(3, wordList.size());
-            assertIterableEquals(Arrays.asList("hombre", "mujer", "reina"), wordList.getWordList());
+            assertTrue(Arrays.asList("hombre", "mujer", "reina").containsAll(wordList.getWordList()));
         }
     }   
 }

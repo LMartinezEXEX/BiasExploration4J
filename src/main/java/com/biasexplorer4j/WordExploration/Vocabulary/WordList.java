@@ -1,17 +1,18 @@
 package com.biasexplorer4j.WordExploration.Vocabulary;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WordList implements Iterable<Word> {
 
     private String title;
-    private List<Word> wordList;
+    private Set<Word> wordList;
 
-    @SuppressWarnings("unchecked")
     protected WordList(List<? extends Word> words, String title) {
         if (Objects.isNull(words) || words.size() == 0) {
             throw new IllegalArgumentException("Word list must contain at least one word");
@@ -20,7 +21,7 @@ public class WordList implements Iterable<Word> {
         }
 
         this.title = title;
-        this.wordList = (List<Word>) new ArrayList<>(words);
+        this.wordList = new HashSet<>(words);
     }
 
     protected boolean add(List<? extends Word> words) {
