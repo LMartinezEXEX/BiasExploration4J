@@ -133,7 +133,7 @@ public class ScatterPlot extends JFrame {
             for (int i = 0; i < words.size(); ++i) {
                 String token = words.get(i).getWord();
                 double[] projections = words.get(i).getProjections();
-                XYTextAnnotation label = new XYTextAnnotation(token, projections[0], projections[1] + 0.02);
+                XYTextAnnotation label = new XYTextAnnotation(token, projections[0], projections[1] + 0.01);
                 plot.addAnnotation(label);
             }
         }   
@@ -144,11 +144,11 @@ public class ScatterPlot extends JFrame {
         double maxX = (Objects.isNull(xAxisLimits)) ? dataset.getDomainUpperBound(true) : xAxisLimits[1];
         double minY = (Objects.isNull(yAxisLimits)) ? dataset.getRangeLowerBound(true) : yAxisLimits[0];
         double maxY = (Objects.isNull(xAxisLimits)) ? dataset.getRangeUpperBound(true) : yAxisLimits[1];
-        
-        XYLineAnnotation XLine = new XYLineAnnotation(minX, 0, maxX, 0, new BasicStroke(1.0f), Color.BLACK);
-        plot.addAnnotation(XLine);
 
-        XYLineAnnotation YLine = new XYLineAnnotation(0, minY, 0, maxY, new BasicStroke(1.0f), Color.BLACK);
+        XYLineAnnotation XLine = new XYLineAnnotation(minX, (minY+maxY) / 2, maxX, (minY+maxY) / 2, new BasicStroke(1.0f), Color.BLACK);
+        plot.addAnnotation(XLine);
+        
+        XYLineAnnotation YLine = new XYLineAnnotation((minX+maxX) / 2, minY, (minX+maxX) / 2, maxY, new BasicStroke(1.0f), Color.BLACK);
         plot.addAnnotation(YLine);
     }
     

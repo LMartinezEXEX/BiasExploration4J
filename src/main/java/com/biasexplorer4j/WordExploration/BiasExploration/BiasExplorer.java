@@ -134,8 +134,8 @@ public class BiasExplorer {
         double[] xAxisLimits = new double[] {-1, 1};
         double[] yAxisLimits = new double[] {-1, 1};
         String title = "4 Spaces word projection";
-        String xAxisLabel = "← " + String.join(", ", kernelRight.getWordList()) + "      " + String.join(", ", kernelLeft.getWordList()) + " →";
-        String yAxisLabel = "← " + String.join(", ", kernelDown.getWordList()) + "      " + String.join(", ", kernelUp.getWordList()) + " →";
+        String xAxisLabel = setAxisLabel(kernelRight, kernelLeft);
+        String yAxisLabel = setAxisLabel(kernelDown, kernelUp);
         
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("xAxisLimits", xAxisLimits);
@@ -147,6 +147,24 @@ public class BiasExplorer {
         arguments.put("drawOriginAxis", true);
 
         PlotManager.getInstance().plot(PLOT_TYPE.SCATTER, arguments, Arrays.asList(projectedWords));
+    }
+
+    private  String setAxisLabel(WordList kernel_1, WordList kernel_2) {
+        String kernel_1_title = kernel_1.getTitle().strip();
+        String kernel_2_title = kernel_2.getTitle().strip();
+
+        String raw_words_kernel_1 = String.join(", ", kernel_1.getWordList());
+        String raw_words_kernel_2 = String.join(", ", kernel_2.getWordList());
+
+        String axisLabel;
+        if (raw_words_kernel_1.length() + raw_words_kernel_2.length() >= 20) {
+            axisLabel = "← " + kernel_1_title + "      " + kernel_2_title + " →";
+        }
+        else {
+            axisLabel = "← " + raw_words_kernel_1 + "      " + raw_words_kernel_2 + " →";
+        }
+
+        return axisLabel;
     }
 
     public Vocabulary getVocabulary() {
