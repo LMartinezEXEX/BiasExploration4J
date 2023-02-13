@@ -24,9 +24,7 @@ import com.biasexplorer4j.WordExploration.Vocabulary.WordList;
 
 import java.awt.Color;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 public class BarPlot extends JFrame {
@@ -94,7 +92,7 @@ public class BarPlot extends JFrame {
         CategoryAxis categoryAxis = new CategoryAxis(xAxisLabel);
 
         ValueAxis valueAxis = new NumberAxis(yAxisLabel);
-        double absoluteMax = getAbsoluteMaxValue(wordList.getWords().stream().map(w -> w.getProjections()[0]).toList());
+        double absoluteMax = getAbsoluteMaxValue();
         valueAxis.setRange(-absoluteMax - SPACE_TO_BORDER, absoluteMax + SPACE_TO_BORDER);
         
         BarRenderer renderer = new BarRenderer();
@@ -112,8 +110,8 @@ public class BarPlot extends JFrame {
         return chart;
     }
 
-    private double getAbsoluteMaxValue(List<Double> values) {
-        return Collections.max(values.stream().map(d -> Math.abs(d)).toList());
+    private double getAbsoluteMaxValue() {
+        return wordList.getWords().stream().mapToDouble(w -> w.getProjections()[0]).max().getAsDouble();
     }
 
     private static void checkProjections(Word word) {
