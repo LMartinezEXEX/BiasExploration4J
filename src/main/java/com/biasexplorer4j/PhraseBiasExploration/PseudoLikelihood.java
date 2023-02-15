@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +29,7 @@ public class PseudoLikelihood {
         Iterator<K> keyIter = keys.iterator();
         Iterator<V> valIter = values.iterator();
         return IntStream.range(0, keys.size()).boxed()
-                .collect(Collectors.toMap(_i -> keyIter.next(), _i -> valIter.next()));
+                .collect(Collectors.toMap(_i -> keyIter.next(), _i -> valIter.next(), (x, y) -> y, LinkedHashMap::new));
     }
 
     public List<Double> getScores() {

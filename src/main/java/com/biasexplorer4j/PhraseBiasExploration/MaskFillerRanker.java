@@ -1,7 +1,7 @@
 package com.biasexplorer4j.PhraseBiasExploration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,11 +75,11 @@ public class MaskFillerRanker {
             throw new IllegalArgumentException("Word lists array can not be null nor have less than one word list");
         }
 
-        Map<String, Double> results = new HashMap<>(wordlists.length);
-
+        Map<String, Double> results = new LinkedHashMap<>(wordlists.length);
+        
+        Mean mean = new Mean();
         for (UncheckedWordList wl : wordlists) {
             Map<String, Double> first = compare(phrase, wl.getWordList());
-            Mean mean = new Mean();
             results.put(wl.getTitle(), mean.evaluate(first.values().stream().mapToDouble(d -> d).toArray()));
         }
         return results;
